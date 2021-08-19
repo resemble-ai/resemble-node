@@ -1,0 +1,18 @@
+node_modules
+.DS_Store
+.nyc_output
+
+# Don't accidently check-in sound files!
+*.mp4
+*.ogg
+*.mp3
+*.wav
+*.flac
+*.m4a
+*.webm
+
+# Specify a sound file you'd like to check in directly like this:
+# !/spec/test_audio.wav
+!sample_audio.wav
+
+.vscode

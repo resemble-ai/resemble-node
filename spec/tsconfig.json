@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "moduleResolution": "node",
+    "types": [
+      "node",
+      "mocha"
+    ],
+    "paths": {
+      "@resemble/node": [".."]
+    }
+  }
+}
