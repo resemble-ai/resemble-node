@@ -5,7 +5,7 @@ const FormData = require('form-data')
 module.exports = context => {
   const all = async (voiceUuid, page, pageSize) => {
     try {
-      const response = await context.get(`voices/${voiceUuid}/recordings?page=${page}${pageSize ? `&limit=${pageSize}` : ''}`)
+      const response = await context.get(`voices/${voiceUuid}/recordings?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`)
       const json = await response.json()
       if (json.success) json.items.map(item => ({
         ...item,
