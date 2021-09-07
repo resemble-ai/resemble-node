@@ -3,7 +3,7 @@ const error = require('./util').error
 module.exports = context => {
   const all = async (page, pageSize) => {
     try {
-      const response = await context.get(`voices?page=${page}${pageSize ? `&limit=${pageSize}` : ''}`)
+      const response = await context.get(`voices?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`)
       const json = await response.json()
       if (json.success) json.items.map(item => ({
         ...item,
