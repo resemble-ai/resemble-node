@@ -92,6 +92,6 @@ module.exports = context => {
     createAsync: create,
     createSync: create,
     delete: destroy,
-    update,
+    updateAsync: update,
   }
 }
