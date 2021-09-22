@@ -279,6 +279,7 @@ declare module '@resemble/node' {
       get: (projectUuid: string, uuid: string) => Promise<ReadResponse<Clip>>
       createAsync: (projectUuid: string, clip: AsyncClipInput) => Promise<WriteResponse<Clip>>
       createSync: (projectUuid: string, clip: SyncClipInput) => Promise<WriteResponse<Clip>>
+      updateAsync: (projectUuid: string, uuid: string, clip: AsyncClipInput) => Promise<WriteResponse<Clip>>
       delete: (projectUuid: string, uuid: string) => Promise<DeleteResponse>
     }
 

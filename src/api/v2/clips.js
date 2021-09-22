@@ -56,6 +56,26 @@ module.exports = context => {
     }
   }
 
+  const update = async (projectUuid, uuid) => {
+    try {
+      const response = await context.put(`projects/${projectUuid}/clips/${uuid}`, clipInput)
+      let json = await response.json()
+      if (json.success) {
+        json = {
+          ...json,
+          item: {
+            ...json.item,
+            created_at: new Date(json.item.created_at),
+            updated_at: new Date(json.item.updated_at)
+          }
+        }
+      }
+      return json
+    } catch (e) {
+      return error(e)
+    }
+  }
+
   const destroy = async (projectUuid, uuid) => {
     try {
       const response = await context.delete(`projects/${projectUuid}/clips/${uuid}`)
@@ -72,6 +92,6 @@ module.exports = context => {
     createAsync: create,
     createSync: create,
     delete: destroy,
-    // update,
+    updateAsync: update,
   }
 }
