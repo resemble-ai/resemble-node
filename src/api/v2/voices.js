@@ -85,17 +85,7 @@ module.exports = context => {
       return error(e)
     }
   }
-
-  const prepareForFill = async (uuid) => {
-    try {
-      const response = await context.post(`voices/${uuid}/prepare-for-fill`)
-      const json = response.json()
-      return json
-    } catch (e) {
-      return error(e)
-    }
-  }
-
+  
   const build = async (uuid) => {
     try {
       const response = await context.post(`voices/${uuid}/build`)
@@ -111,7 +101,7 @@ module.exports = context => {
     get,
     create,
     delete: destroy,
-    prepareForFill,
+    build,
     update,
   }
 }

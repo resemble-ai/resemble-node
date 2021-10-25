@@ -279,7 +279,7 @@ declare module '@resemble/node' {
       get: (projectUuid: string, uuid: string) => Promise<ReadResponse<Clip>>
       createAsync: (projectUuid: string, clip: AsyncClipInput) => Promise<WriteResponse<Clip>>
       createSync: (projectUuid: string, clip: SyncClipInput) => Promise<WriteResponse<Clip>>
-      updateAsync: (projectUuid: string, uuid: string, clip: AsyncClipInput) => Promise<WriteResponse<Clip>>
+      updateAsync: (projectUuid: string, uuid: string, clip: AsyncClipInput) => Promise<UpdateResponse<Clip>>
       delete: (projectUuid: string, uuid: string) => Promise<DeleteResponse>
     }
 
@@ -299,7 +299,6 @@ declare module '@resemble/node' {
       update: (uuid: string, voice: VoiceInput) => Promise<UpdateResponse<Voice>>
       delete: (uuid: string) => Promise<DeleteResponse>
       build: (uuid: string) => Promise<{ success: boolean, message?: string }>
-      prepareForFill: (uuid: string) => Promise<{ success: boolean, message?: string }>
     }
     
     interface API extends ResembleAPI {
