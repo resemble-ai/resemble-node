@@ -2,13 +2,13 @@ import Resemble, { Version2 } from '@resemble/node'
 import { fail, ok, strictEqual } from 'assert'
 import { createReadStream } from 'fs'
 import { resolve } from 'path'
+import { TestUtils } from '../../TestUtil'
 
 const getSampleAudio = () => createReadStream(resolve(__dirname, '../../sample_audio.wav'))
 
 const ResembleConstructor: Resemble = require('../../..')
 
 describe(`ResembleAPI v2`, () => {
-  const API_TOKEN = 'test'
   let resemble: Version2.API
 
   const recordingCreateInput: Version2.RecordingInput = {
@@ -26,8 +26,8 @@ describe(`ResembleAPI v2`, () => {
   }
 
   beforeEach(() => {
-    resemble = new ResembleConstructor('v2', API_TOKEN, {
-      baseUrl: 'http://localhost:3000/api/v2'
+    resemble = new ResembleConstructor('v2', TestUtils.getTestAPIKey(), {
+      baseUrl: TestUtils.getTestBaseURL()
     })
   })
 
@@ -40,12 +40,11 @@ describe(`ResembleAPI v2`, () => {
 
     before(async () => {
       const response = await resemble.voices.create({name: 'Test voice'})
+      ok(response.success)
       voiceUuid = response.item.uuid
-      const response2 = await resemble.voices.all(1, 1000)
       strictEqual(typeof voiceUuid, 'string')
-      strictEqual(response2.items.some(v => v.uuid === voiceUuid), true)
     })
-    
+
     after(async () => {
       await resemble.voices.delete(voiceUuid)
     })
@@ -78,7 +77,7 @@ describe(`ResembleAPI v2`, () => {
 
     let createdRecordingUUIDs = []
     
-    describe(`#create`, () => {
+    describe(`#create`, function() {
       it(`doesn't throw`, async () => {
         let error = false
         let created

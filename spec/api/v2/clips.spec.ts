@@ -1,10 +1,10 @@
 import Resemble, { Version2 } from '@resemble/node'
 import { fail, ok, strictEqual } from 'assert'
+import { TestUtils } from '../../TestUtil'
 
 const ResembleConstructor: Resemble = require('../../..')
 
 describe(`ResembleAPI v2`, () => {
-  const API_TOKEN = 'test'
   let resemble: Version2.API
 
   const clipCreateInput: Version2.ClipInput = {
@@ -30,8 +30,8 @@ describe(`ResembleAPI v2`, () => {
   }
 
   beforeEach(() => {
-    resemble = new ResembleConstructor('v2', API_TOKEN, {
-      baseUrl: 'http://localhost:3000/api/v2'
+    resemble = new ResembleConstructor('v2', TestUtils.getTestAPIKey(), {
+      baseUrl: TestUtils.getTestBaseURL()
     })
   })
 
@@ -44,10 +44,10 @@ describe(`ResembleAPI v2`, () => {
     let voiceUuid: string
     
     before(async () => {
-      const response = await resemble.voices.get('test')
-      // const response = await resemble.voices.create({name: 'Test voice'})
+      const response = await resemble.voices.get(TestUtils.getTestVoiceUUID())
+      
       strictEqual(response.success, true)
-      voiceUuid = 'test' // response.item.uuid
+      voiceUuid = response.item.uuid // response.item.uuid
 
       clipCreateInput.voice_uuid = voiceUuid
       clipCreateAsyncInput.voice_uuid = voiceUuid
@@ -60,6 +60,7 @@ describe(`ResembleAPI v2`, () => {
         is_collaborative: false,
         is_public: false
       })
+
       projectUuid = response2.item.uuid
     })
     

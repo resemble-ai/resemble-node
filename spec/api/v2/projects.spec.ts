@@ -1,10 +1,10 @@
 import Resemble, { Version2 } from '@resemble/node'
 import { ok, strictEqual } from 'assert'
+import { TestUtils } from '../../TestUtil'
 
 const ResembleConstructor: Resemble = require('../../..')
 
 describe(`ResembleAPI v2`, () => {
-  const API_TOKEN = 'test'
   let resemble: Version2.API
 
   const projectInput: Version2.ProjectInput = {
@@ -16,8 +16,8 @@ describe(`ResembleAPI v2`, () => {
   }
 
   beforeEach(() => {
-    resemble = new ResembleConstructor('v2', API_TOKEN, {
-      baseUrl: 'http://localhost:3000/api/v2'
+    resemble = new ResembleConstructor('v2', TestUtils.getTestAPIKey(), {
+      baseUrl: TestUtils.getTestBaseURL()
     })
   })
 
