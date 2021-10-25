@@ -18,7 +18,7 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 
 * Typescript definitions
 * Works with NodeJS and Deno
-* Supports the V2 API (voice building coming soon)
+* Supports the V2 API
 
 ## Test!
 
