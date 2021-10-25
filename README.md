@@ -41,3 +41,13 @@ npm run coverage
 **Last run:**
 
 ![image](./coverage.png)
+
+# Publishing
+
+1. `git status`: Make sure your working directory has no pending changes.
+2. Update the version key in `package.json`
+3. `git commit`: Commit this version change.
+4. Publish to npmjs.org:
+  ```sh
+  npm publish
+  ```
