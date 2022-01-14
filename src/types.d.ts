@@ -3,6 +3,7 @@ import { ReadStream } from "fs"
 declare module '@resemble/node' {
   interface APIOptions {
     baseUrl?: string
+    synServerUrl?: string
   }
 
   export default interface ResembleAPI {
@@ -243,6 +244,12 @@ declare module '@resemble/node' {
       callback_uri: string
     }
 
+    interface StreamInput {
+      data: string
+      project_uuid: string
+      voice_uuid: string
+    }
+
     interface ProjectInput {
       name: string
       description: string
@@ -280,6 +287,7 @@ declare module '@resemble/node' {
       createAsync: (projectUuid: string, clip: AsyncClipInput) => Promise<WriteResponse<Clip>>
       createSync: (projectUuid: string, clip: SyncClipInput) => Promise<WriteResponse<Clip>>
       updateAsync: (projectUuid: string, uuid: string, clip: AsyncClipInput) => Promise<UpdateResponse<Clip>>
+      stream: (streamInput: StreamInput, bufferSize?: number, ignoreWavHeader?: boolean) => Generator<Buffer, undefined, undefined>
       delete: (projectUuid: string, uuid: string) => Promise<DeleteResponse>
     }
 

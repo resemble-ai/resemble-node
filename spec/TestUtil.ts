@@ -13,6 +13,12 @@ export class TestUtils {
     return process.env.TEST_BASE_URL || 'https://app.resemble.ai/api/v2'
   }
 
+  public static getTestSynServerURL(): string {
+    if (!process.env.TEST_SYN_SERVER_URL)
+      throw 'Invalid syn server url specified; please set the TEST_SYN_SERVER_URL environment variable'
+    return process.env.TEST_SYN_SERVER_URL
+  }
+
   public static getTestAPIKey(): string {
     const TEST_API_KEY = process.env.TEST_API_KEY
     if (!TEST_API_KEY) {
@@ -26,6 +32,6 @@ export class TestUtils {
     if (!TEST_CALLBACK_URL) {
       throw 'Invalid test callback url'
     }
-    // TODO
+    return TEST_CALLBACK_URL
   }
 }

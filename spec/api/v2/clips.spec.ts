@@ -1,5 +1,5 @@
 import Resemble, { Version2 } from '@resemble/node'
-import { fail, ok, strictEqual } from 'assert'
+import {fail, notStrictEqual, ok, strictEqual} from 'assert'
 import { TestUtils } from '../../TestUtil'
 
 const ResembleConstructor: Resemble = require('../../..')
@@ -29,9 +29,16 @@ describe(`ResembleAPI v2`, () => {
     raw: false,
   }
 
+  const clipStreamInput: Version2.StreamInput = {
+    data: 'this is a test.',
+    project_uuid: '',
+    voice_uuid: ''
+  }
+
   beforeEach(() => {
     resemble = new ResembleConstructor('v2', TestUtils.getTestAPIKey(), {
-      baseUrl: TestUtils.getTestBaseURL()
+      baseUrl: TestUtils.getTestBaseURL(),
+      synServerUrl: TestUtils.getTestSynServerURL()
     })
   })
 
@@ -52,6 +59,7 @@ describe(`ResembleAPI v2`, () => {
       clipCreateInput.voice_uuid = voiceUuid
       clipCreateAsyncInput.voice_uuid = voiceUuid
       clipCreateSyncInput.voice_uuid = voiceUuid
+      clipStreamInput.voice_uuid = voiceUuid
       
       const response2 = await resemble.projects.create({
         name: 'Test Project',
@@ -62,8 +70,9 @@ describe(`ResembleAPI v2`, () => {
       })
 
       projectUuid = response2.item.uuid
+      clipStreamInput.project_uuid = projectUuid
     })
-    
+
     after(async () => {
       // await resemble.voices.delete(voiceUuid)
       await resemble.projects.delete(projectUuid)
@@ -180,6 +189,21 @@ describe(`ResembleAPI v2`, () => {
           createdRecordingUUIDs.push(created.item.uuid)
           resolve(null)
         })
+      })
+    })
+
+    describe(`#stream`, () => {
+      it(`doesn't throw`, async () => {
+        let error = false
+        try {
+          for await (const buff of resemble.clips.stream(clipStreamInput)) {
+            notStrictEqual(buff, null)
+          }
+        } catch (e) {
+          error = true
+        } finally {
+          strictEqual(error, false)
+        }
       })
     })
 

@@ -13,6 +13,7 @@ const VERSIONS = {
 }
 
 let baseUrl = null
+let synServerUrl = null
 const APIBuilder = {}
 
 APIBuilder.setBaseUrl = (url) => {
@@ -26,6 +27,16 @@ APIBuilder.setBaseUrl = (url) => {
   baseUrl = url
 }
 
+APIBuilder.setSynServerUrl = (url) => {
+  if (typeof url !== 'string' || url.length === 0) {
+    throw new Error(`The provided syn server url "${url}" must be a non-empty string.`)
+  }
+  // add trailing / if necessary
+  if (!url.endsWith('/')) url = `${url}/`
+
+  synServerUrl = url
+}
+
 APIBuilder.build = (apiVersion, apiToken, options) => {
   if (typeof apiToken !== 'string' || apiToken.length === 0) {
     throw new Error(`The provided API_TOKEN "${apiToken}" must be a non-empty string.`)
@@ -37,23 +48,37 @@ APIBuilder.build = (apiVersion, apiToken, options) => {
   
   const version = VERSIONS[apiVersion]
 
-  const headers = {
-    Authorization: `Token token=${apiToken}`,
-    ['Content-Type']: 'application/json'
+  const headers = (synServer) => {
+    let h = {
+      ['Content-Type']: 'application/json'
+    }
+    if (synServer) {
+      h['x-access-token'] = apiToken
+    } else {
+      h['Authorization'] = `Token token=${apiToken}`
+    }
+    return h
   }
   
   const appUrl = baseUrl ? baseUrl : version.baseUrl
-  const api = path => `${appUrl}${path}`
+
+  const api = (path, synServer) => {
+    if (synServer) {
+      return `${synServerUrl}${path}`
+    } else {
+      return `${appUrl}${path}`
+    }
+  }
 
   const context = {
     headers,
     options,
     api,
 
-    get: path => fetch(api(path), { method: 'GET', headers }),
-    post: (path, data) => fetch(api(path), { method: 'POST', headers, body: JSON.stringify(data) }),
-    put: (path, data) => fetch(api(path), { method: 'PUT', headers, body: JSON.stringify(data) }),
-    delete: path => fetch(api(path), { method: 'DELETE', headers }),
+    get: (path, synServer = false) => fetch(api(path, synServer), { method: 'GET', headers:  headers(synServer)}),
+    post: (path, data, synServer = false) =>  fetch(api(path, synServer), { method: 'POST', headers: headers(synServer), body: JSON.stringify(data) }),
+    put: (path, data, synServer = false) => fetch(api(path, synServer), { method: 'PUT', headers: headers(synServer), body: JSON.stringify(data) }),
+    delete: (path, synServer = false)=> fetch(api(path, synServer), { method: 'DELETE', headers: headers(synServer) }),
   }
   
   const build = require(version.exports)(context)
