@@ -61,6 +61,15 @@ module.exports = context => {
   async function* stream(streamInput, bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true) {
     try {
       const response = await context.post('stream', streamInput, true)
+
+      // check for error response
+      if (!response.ok) {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson ? await response.json() : null;
+        const error = (data && data.message) || response.status;
+        throw Error(error);
+      }
+
       const streamDecoder = new StreamDecoder(bufferSize, ignoreWavHeader)
       streamDecoder.reset()
 
