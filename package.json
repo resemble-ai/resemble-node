@@ -10,7 +10,7 @@
     "coverage": "nyc ts-mocha -p spec/tsconfig.json spec/**/*.spec.ts"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=14.0.0"
   },
   "license": "MIT",
   "dependencies": {

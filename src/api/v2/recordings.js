@@ -47,7 +47,7 @@ module.exports = context => {
       formData.append('is_active', recordingInput.is_active ? 'true' : 'false')
       formData.append('file', buffer)
 
-      const response = await fetch(context.api(`voices/${voiceUuid}/recordings`), {
+      const response = await fetch(context.api(`voices/${voiceUuid}/recordings`, false), {
         method: 'POST',
         headers: {
           Authorization: context.headers.Authorization,

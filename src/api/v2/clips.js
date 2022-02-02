@@ -1,3 +1,5 @@
+const StreamDecoder = require("./StreamDecoder");
+const {DEFAULT_BUFFER_SIZE} = require("./StreamDecoder");
 const error = require('./util').error
 
 module.exports = context => {
@@ -56,6 +58,46 @@ module.exports = context => {
     }
   }
 
+  async function* stream(streamInput, bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true) {
+    try {
+      const response = await context.post('stream', streamInput, true)
+
+      // check for error response
+      if (!response.ok) {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson ? await response.json() : null;
+        const error = (data && data.message) || response.status;
+        throw Error(error);
+      }
+
+      const streamDecoder = new StreamDecoder(bufferSize, ignoreWavHeader)
+      streamDecoder.reset()
+
+      // Iterate over the stream and start decoding, and returning data
+      for await (const chunk of response.body) {
+        streamDecoder.decodeChunk(chunk)
+        const buffer = streamDecoder.flushBuffer()
+        if (buffer !== null)
+          yield buffer
+      }
+
+      // Keep draining the buffer until the buffer.length < bufferSize or buffer.length == 0
+      let buffer = streamDecoder.flushBuffer()
+      while (buffer !== null) {
+        const buffToReturn = Buffer.from(buffer)
+        buffer = streamDecoder.flushBuffer()
+        yield buffToReturn
+      }
+
+      // Drain any leftover content in the buffer, buffer.length will always be less than bufferSize here
+      buffer = streamDecoder.flushBuffer(true)
+      if (buffer !== null)
+        yield buffer
+    } catch (e) {
+      return error(e)
+    }
+  }
+
   const update = async (projectUuid, uuid) => {
     try {
       const response = await context.put(`projects/${projectUuid}/clips/${uuid}`, clipInput)
@@ -91,6 +133,7 @@ module.exports = context => {
     get,
     createAsync: create,
     createSync: create,
+    stream,
     delete: destroy,
     updateAsync: update,
   }
