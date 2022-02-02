@@ -260,6 +260,7 @@ declare module '@resemble/node' {
 
     interface VoiceInput {
       name: string
+      dataset_url?: string
     }
 
     //
