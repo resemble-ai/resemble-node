@@ -1,10 +1,11 @@
 import Resemble, { Version2 } from '@resemble/node'
 import { fail, ok, strictEqual } from 'assert'
-import { createReadStream } from 'fs'
+import { createReadStream, statSync } from 'fs'
 import { resolve } from 'path'
 import { TestUtils } from '../../TestUtil'
 
 const getSampleAudio = () => createReadStream(resolve(__dirname, '../../sample_audio.wav'))
+const getSampleAudioBytes = () => statSync(resolve(__dirname, '../../sample_audio.wav')).size;
 
 const ResembleConstructor: Resemble = require('../../..')
 
@@ -82,7 +83,7 @@ describe(`ResembleAPI v2`, () => {
         let error = false
         let created
         try {
-          created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+          created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
         } catch (e) {
           error = true
         } finally {
@@ -101,7 +102,7 @@ describe(`ResembleAPI v2`, () => {
           let created: Version2.WriteResponse<Version2.Recording>
   
           try {
-            created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+            created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
           } catch (e) {
             fail(e)
           }
@@ -129,7 +130,7 @@ describe(`ResembleAPI v2`, () => {
         let error = false
         let updated: Version2.UpdateResponse<Version2.Recording>
         try {
-          const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+          const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
           createdRecordingUUIDs.push(created.item.uuid)
           
           const uuid = created.item.uuid
@@ -146,7 +147,7 @@ describe(`ResembleAPI v2`, () => {
       })
 
       it(`updates a recording with correct properties`, async () => {
-        const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+        const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
         createdRecordingUUIDs.push(created.item.uuid)
 
         const uuid = created.item.uuid
@@ -169,7 +170,7 @@ describe(`ResembleAPI v2`, () => {
       it(`doesn't throw`, async () => {
         let error = false
         try {
-          const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+          const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
 
           await resemble.recordings.delete(voiceUuid, created.item.uuid)
         } catch (e) {
@@ -185,7 +186,7 @@ describe(`ResembleAPI v2`, () => {
        * - This test may fail if there are more than 100 recordings assigned to the user.
        */
       it(`deletes recordings`, async () => {
-        await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+        await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
         const recordings = await resemble.recordings.all(voiceUuid, 1, 100)
         strictEqual(recordings.items.length > 0, true)
 
@@ -207,7 +208,7 @@ describe(`ResembleAPI v2`, () => {
       it(`doesn't throw`, async () => {
         let error = false
         try {
-          const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+          const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
           const recording = await resemble.recordings.get(voiceUuid, created.item.uuid)
           await resemble.recordings.delete(voiceUuid, created.item.uuid)
         } catch (e) {
@@ -218,7 +219,7 @@ describe(`ResembleAPI v2`, () => {
       })
 
       it(`returns the recording`, async () => {
-        const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio())
+        const created = await resemble.recordings.create(voiceUuid, recordingCreateInput, getSampleAudio(), getSampleAudioBytes())
         const recording = await resemble.recordings.get(voiceUuid, created.item.uuid)
         ok(created)
         strictEqual(recording.success, true)
