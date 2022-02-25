@@ -48,7 +48,7 @@ APIBuilder.build = (apiVersion, apiToken, options) => {
   
   const version = VERSIONS[apiVersion]
 
-  const headers = (synServer) => {
+  const headers = (synServer = false) => {
     let h = {
       ['Content-Type']: 'application/json'
     }

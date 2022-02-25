@@ -268,6 +268,7 @@ declare module '@resemble/node' {
     interface VoiceInput {
       name: string
       dataset_url?: string
+      callback_uri?: string
     }
 
     //
@@ -296,7 +297,7 @@ declare module '@resemble/node' {
       all: (voiceUuid: string, page: number, pageSize?: number) => Promise<PaginationResponse<Recording>>
       get: (voiceUuid: string, uuid: string) => Promise<ReadResponse<Recording>>
       // @param recordingFile     Example: fs.readFileSync('sample_audio.wav');
-      create: (voiceUuid: string, recording: RecordingInput, recordingFile: ReadStream) => Promise<WriteResponse<Recording>>
+      create: (voiceUuid: string, recording: RecordingInput, recordingFile: ReadStream, fileSizeInBytes: number) => Promise<WriteResponse<Recording>>
       update: (voiceUuid: string, uuid: string, recording: RecordingInput) => Promise<WriteResponse<Recording>>
       delete: (voiceUuid: string, uuid: string) => Promise<DeleteResponse>
     }

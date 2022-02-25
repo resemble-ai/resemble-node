@@ -38,19 +38,19 @@ module.exports = context => {
     }
   }
   
-  const create = async (voiceUuid, recordingInput, buffer) => {
+  const create = async (voiceUuid, recordingInput, buffer, fileSizeInBytes) => {
     try {
       const formData = new FormData()
       formData.append('name', recordingInput.name)
       formData.append('text', recordingInput.text)
       formData.append('emotion', recordingInput.emotion)
       formData.append('is_active', recordingInput.is_active ? 'true' : 'false')
-      formData.append('file', buffer)
+      formData.append('file', buffer, { knownLength: fileSizeInBytes })
 
       const response = await fetch(context.api(`voices/${voiceUuid}/recordings`, false), {
         method: 'POST',
         headers: {
-          Authorization: context.headers.Authorization,
+          Authorization: context.headers().Authorization,
           ...formData.getHeaders()
         },
         body: formData
