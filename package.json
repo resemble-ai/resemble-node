@@ -1,13 +1,12 @@
 {
   "name": "@resemble/node",
-  "type": "commonjs",
   "version": "1.2.2",
   "description": "Resemble API",
   "main": "./src/resemble.js",
   "types": "./src/types.d.ts",
   "scripts": {
     "start": "nodemon -e ts,js -x 'npm test -- --bail'",
-    "test": "ts-mocha -p spec/tsconfig.json spec/api/v2/projects.spec.ts",
+    "test": "ts-mocha -p spec/tsconfig.json spec/**/*.spec.ts",
     "coverage": "nyc ts-mocha -p spec/tsconfig.json spec/**/*.spec.ts"
   },
   "engines": {
