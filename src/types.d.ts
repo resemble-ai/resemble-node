@@ -6,12 +6,18 @@ declare module '@resemble/node' {
     synServerUrl?: string
   }
 
-  export default interface ResembleAPI {
+  export interface ResembleAPI {
     new (version: 'v1', apiToken: string, options?: Version1.Options): Version1.API
     new (version: 'v2', apiToken: string, options?: Version2.Options): Version2.API
     new (version: string, apiToken: string, options?: APIOptions): ResembleAPI
   }
   
+  export default function Resemble(
+    version: string,
+    apiToken: string,
+    options?: APIOptions | Version1.Options | Version2.Options
+  ): void;
+
   namespace Version1 {
     type URL = string
     type UUID = string

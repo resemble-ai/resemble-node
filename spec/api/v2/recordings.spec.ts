@@ -1,4 +1,4 @@
-import Resemble, { Version2 } from '@resemble/node'
+import Resemble, { Version2 } from '../../../'
 import { fail, ok, strictEqual } from 'assert'
 import { createReadStream, statSync } from 'fs'
 import { resolve } from 'path'
@@ -7,7 +7,6 @@ import { TestUtils } from '../../TestUtil'
 const getSampleAudio = () => createReadStream(resolve(__dirname, '../../sample_audio.wav'))
 const getSampleAudioBytes = () => statSync(resolve(__dirname, '../../sample_audio.wav')).size;
 
-const ResembleConstructor: Resemble = require('../../..')
 
 describe(`ResembleAPI v2`, () => {
   let resemble: Version2.API
@@ -27,7 +26,7 @@ describe(`ResembleAPI v2`, () => {
   }
 
   beforeEach(() => {
-    resemble = new ResembleConstructor('v2', TestUtils.getTestAPIKey(), {
+    resemble = new Resemble('v2', TestUtils.getTestAPIKey(), {
       baseUrl: TestUtils.getTestBaseURL()
     })
   })
