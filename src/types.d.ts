@@ -221,9 +221,10 @@ declare module '@resemble/node' {
     }
 
     type Timestamps = {
-      phonemes: string
-      end_times: number[]
-      phoneme_chars: string[]
+      graph_chars: string[];
+      graph_times: [number, number][];
+      phon_chars: string[];
+      phon_times: [number, number][];
     }
 
     //
