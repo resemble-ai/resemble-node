@@ -17,7 +17,7 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 ## Features
 
 * Typescript definitions
-* Works with NodeJS and Deno
+* Works with NodeJS, Deno, and the browser!
 * Supports the V2 API
 
 ## Test!
@@ -25,22 +25,6 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 ```
 npm run test
 ```
-
-or to continuously run tests on file changes:
-
-```
-npm run start
-```
-
-## Coverage!
-
-```
-npm run coverage
-```
-
-**Last run:**
-
-![image](./coverage.png)
 
 # Publishing
 

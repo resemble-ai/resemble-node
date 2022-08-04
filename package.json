@@ -1,29 +1,28 @@
 {
   "name": "@resemble/node",
-  "version": "1.2.1",
   "description": "Resemble API",
-  "main": "src/resemble.js",
-  "types": "src/types.d.ts",
+  "version": "2.0.0",
+  "type": "module",
+  "source": "src/resemble.ts",
+  "exports": {
+    "require": "./dist/resemble.cjs",
+    "default": "./dist/resemble.modern.js"
+  },
+  "main": "./dist/resemble.cjs",
+  "module": "./dist/resemble.module.js",
+  "unpkg": "./dist/resemble.umd.js",
+  "types": "./dist/resemble.d.ts",
   "scripts": {
-    "start": "nodemon -e ts,js -x 'npm test -- --bail'",
-    "test": "ts-mocha -p spec/tsconfig.json spec/**/*.spec.ts",
-    "coverage": "nyc ts-mocha -p spec/tsconfig.json spec/**/*.spec.ts"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "form-data": "^4.0.0",
-    "node-fetch": "^2.6.1"
+    "build": "microbundle",
+    "test": "jest"
   },
   "devDependencies": {
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^13.13.52",
-    "mocha": "^7.2.0",
-    "nodemon": "^2.0.9",
-    "nyc": "^15.1.0",
-    "ts-mocha": "^8.0.0",
-    "typescript": "^4.3.5"
+    "@types/jest": "^28.1.6",
+    "jest": "^28.1.3",
+    "microbundle": "^0.15.0"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0",
+    "isomorphic-form-data": "^2.0.0"
   }
 }
