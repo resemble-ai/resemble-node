@@ -1,5 +1,5 @@
-import UtilV2, { ErrorResponseV2, PaginationResponseV2, ReadResponseV2, WriteResponseV2 } from "./util"
-// import { DEFAULT_BUFFER_SIZE, StreamDecoder } from './StreamDecoder'
+import UtilV2, { ErrorResponseV2, getAsyncIterableObject, PaginationResponseV2, ReadResponseV2, WriteResponseV2 } from "./util"
+import { DEFAULT_BUFFER_SIZE, StreamDecoder } from './StreamDecoder'
 
 export interface Clip {
   uuid: string
@@ -108,45 +108,45 @@ export default {
     return create(projectUuid, clipInput)
   },
   
-  // stream: async function* (streamInput, bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true): AsyncGenerator {
-  //   try {
-  //     const response = await UtilV2.post('stream', streamInput, true)
+  stream: async function* (streamInput: StreamInput, bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true): AsyncGenerator {
+    try {
+      const response = await UtilV2.post('stream', streamInput, true)
   
-  //     // check for error response
-  //     if (!response.ok) {
-  //       const isJson = response.headers.get('content-type')?.includes('application/json');
-  //       const data = isJson ? await response.json() : null;
-  //       const error = (data && data.message) || response.status;
-  //       throw Error(error);
-  //     }
+      // check for error response
+      if (!response.ok) {
+        const isJson = response.headers.get('content-type')?.includes('application/json');
+        const data = isJson ? await response.json() : null;
+        const error = (data && data.message) || response.status;
+        throw Error(error);
+      }
   
-  //     const streamDecoder = new StreamDecoder(bufferSize, ignoreWavHeader)
-  //     streamDecoder.reset()
+      const streamDecoder = new StreamDecoder(bufferSize, ignoreWavHeader)
+      streamDecoder.reset()
   
-  //     // Iterate over the stream and start decoding, and returning data
-  //     for await (const chunk of response.body!) {
-  //       streamDecoder.decodeChunk(chunk)
-  //       const buffer = streamDecoder.flushBuffer()
-  //       if (buffer !== null)
-  //         yield buffer
-  //     }
+      // Iterate over the stream and start decoding, and returning data
+      for await (const chunk of getAsyncIterableObject(response.body!)) {
+        streamDecoder.decodeChunk(chunk)
+        const buffer = streamDecoder.flushBuffer()
+        if (buffer !== null)
+          yield buffer
+      }
   
-  //     // Keep draining the buffer until the buffer.length < bufferSize or buffer.length == 0
-  //     let buffer = streamDecoder.flushBuffer()
-  //     while (buffer !== null) {
-  //       const buffToReturn = Buffer.from(buffer)
-  //       buffer = streamDecoder.flushBuffer()
-  //       yield buffToReturn
-  //     }
+      // Keep draining the buffer until the buffer.length < bufferSize or buffer.length == 0
+      let buffer = streamDecoder.flushBuffer()
+      while (buffer !== null) {
+        const buffToReturn = Buffer.from(buffer)
+        buffer = streamDecoder.flushBuffer()
+        yield buffToReturn
+      }
   
-  //     // Drain any leftover content in the buffer, buffer.length will always be less than bufferSize here
-  //     buffer = streamDecoder.flushBuffer(true)
-  //     if (buffer !== null)
-  //       yield buffer
-  //   } catch (e) {
-  //     return UtilV2.errorResponse(e)
-  //   }
-  // }
+      // Drain any leftover content in the buffer, buffer.length will always be less than bufferSize here
+      buffer = streamDecoder.flushBuffer(true)
+      if (buffer !== null)
+        yield buffer
+    } catch (e) {
+      return UtilV2.errorResponse(e)
+    }
+  },
   
   updateAsync: async (projectUuid: string, uuid: string, clipInput: AsyncClipInput) => {
     try {

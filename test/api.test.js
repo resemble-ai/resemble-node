@@ -68,8 +68,8 @@ test('clips', async () => {
   expect(syncClip.success).toEqual(true)
   const asyncClip = await Resemble.v2.clips.createAsync(projectUuid, { voice_uuid: getTestVoiceUUID(), callback_uri: getTestCallbackURL(), body: 'This is a test' })
   expect(asyncClip.success).toEqual(true)
-  // for chunk in Resemble.v2.clips.stream(projectUuid, getTestVoiceUUID(), 'This is a test'):
-  //   self.assertIsNotNone(chunk)
+  for (chunk in Resemble.v2.clips.stream(projectUuid, getTestVoiceUUID(), 'This is a test'))
+    self.assertIsNotNone(chunk)
   const updateAsyncClip = await Resemble.v2.clips.updateAsync(projectUuid, syncClip.item.uuid, { voice_uuid: getTestVoiceUUID(), callback_uri: getTestCallbackURL(), body: 'This is another test' })
   expect(updateAsyncClip.success).toEqual(true)
   const clip = await Resemble.v2.clips.get(projectUuid, syncClip.item.uuid)
