@@ -16,13 +16,14 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 
 ## Features
 
-* Typescript definitions
-* Works with NodeJS, Deno, and the browser!
-* Supports the V2 API
+- Typescript definitions
+- Works with NodeJS, Deno, and the browser!
+- Supports the V2 API
 
 ## Test!
 
 ```
+npm run build
 npm run test
 ```
 
@@ -32,6 +33,6 @@ npm run test
 2. Update the version key in `package.json`
 3. `git commit`: Commit this version change.
 4. Publish to npmjs.org:
-  ```sh
-  npm publish
-  ```
+   ```sh
+   npm publish
+   ```

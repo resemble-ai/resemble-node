@@ -23,7 +23,7 @@ export const Resemble = {
       createSync: ClipsV2.createSync,
       createAsync: ClipsV2.createAsync,
       updateAsync: ClipsV2.updateAsync,
-      // stream: ClipsV2.stream,
+      stream: ClipsV2.stream,
       get: ClipsV2.get,
       delete: ClipsV2.destroy,
     },
