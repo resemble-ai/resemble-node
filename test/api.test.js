@@ -76,6 +76,8 @@ test('clips', async () => {
   expect(clip.success).toEqual(true)
   const deleteOp = await Resemble.v2.clips.delete(projectUuid, clip.item.uuid)
   expect(deleteOp.success).toEqual(true)
+
+  await Resemble.v2.projects.delete(projectUuid)
 })
 
 test('voices', async () => {
