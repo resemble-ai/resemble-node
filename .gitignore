@@ -1,6 +1,8 @@
-node_modules
 .DS_Store
-.nyc_output
+dist
+node_modules
+.vscode
+.idea
 
 # Don't accidently check-in sound files!
 *.mp4
@@ -15,6 +17,3 @@ node_modules
 # !/spec/test_audio.wav
 !sample_audio.wav
 
-.vscode
-
-.idea/

@@ -1,7 +1,7 @@
-const DEFAULT_BUFFER_SIZE = 4 * 1024
-const STREAMING_WAV_HEADER_BUFFER_LEN = 44
+export const DEFAULT_BUFFER_SIZE = 4 * 1024
+export const STREAMING_WAV_HEADER_BUFFER_LEN = 44
 
-const StreamDecoder = function(bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true) {
+export const StreamDecoder = function(bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true) {
     if (bufferSize < 2)
         throw new Error('Buffer size cannot be less than 2')
     if (bufferSize % 2 !== 0)
