@@ -1,7 +1,7 @@
 {
   "name": "@resemble/node",
   "description": "Resemble API",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "type": "module",
   "source": "src/resemble.ts",
   "exports": {
@@ -24,5 +24,8 @@
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
     "isomorphic-form-data": "^2.0.0"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
