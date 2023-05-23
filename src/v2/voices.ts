@@ -14,6 +14,7 @@ export interface VoiceInput {
   name: string
   dataset_url?: string
   callback_uri?: string
+	consent: string
 }
 
 export default {
