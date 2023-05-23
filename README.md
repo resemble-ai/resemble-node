@@ -22,6 +22,8 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 
 ## Test!
 
+Before you can test you need to build the dist: `npm run build`. Then you can test via:
+
 ```
 npm run test
 ```
