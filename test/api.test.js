@@ -83,8 +83,8 @@ test('clips', async () => {
 test('voices', async () => {
   const voices = await Resemble.v2.voices.all(1)
   expect(voices.success).toEqual(true)
-  const voice = await Resemble.v2.voices.create({ name: 'Test Voice' })
-  expect(voice.success).toEqual(true)
+  const voice = await Resemble.v2.voices.create({ name: 'Test Voice', consent: "badb"})
+  expect(voice.success).toEqual(false)
   const updated_voice = await Resemble.v2.voices.update(voice.item.uuid, { name: 'NewVoiceName' })
   expect(updated_voice.success).toEqual(true)
   const fetched_voice = await Resemble.v2.voices.get(voice.item.uuid)
