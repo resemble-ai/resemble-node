@@ -5,6 +5,7 @@
   "type": "module",
   "source": "src/resemble.ts",
   "exports": {
+    "types": "./dist/resemble.d.ts",
     "require": "./dist/resemble.cjs",
     "default": "./dist/resemble.modern.js"
   },
