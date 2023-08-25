@@ -36,6 +36,40 @@ export interface AsyncClipInput extends ClipInput {
   callback_uri: string
 }
 
+export interface DirectClipInput {
+  voice_uuid: string
+  project_uuid: string
+  title?: string
+  data: string
+  precision?: 'MULAW' | 'PCM_16' | 'PCM_24' | 'PCM_32'
+  output_format?: 'wav' | 'mp3'
+}
+
+export interface DirectClip {
+  success: true;
+  audio_content: string;
+  audio_timestamps: {
+    graph_chars: string[];
+    graph_times: [number, number][];
+    phon_chars: string[];
+    phon_times: [number, number][];
+  };
+  duration: number;
+  synth_duration: number;
+  output_format: 'wav' | 'mp3';
+  sample_rate: number;
+  issues: string[];
+}
+
+export interface DirectClipError {
+  success: false;
+  issues?: string[];
+  error_name: string;
+  error_params: unknown;
+  feedback_uuid: string;
+  message: string;
+}
+
 export interface StreamInput {
   data: string
   project_uuid: string
@@ -106,6 +140,16 @@ export default {
 
   createSync: async (projectUuid: string, clipInput: SyncClipInput): Promise<WriteResponseV2<Clip> | ErrorResponseV2> => {
     return create(projectUuid, clipInput)
+  },
+
+  createDirect: async (clipInput: DirectClipInput): Promise<DirectClip | DirectClipError | ErrorResponseV2> => {
+    try {
+      const response = await UtilV2.post('synthesize', clipInput, true)
+      let json = await response.json()
+      return json
+    } catch (e) {
+      return UtilV2.errorResponse(e)
+    }
   },
   
   // stream: async function* (streamInput, bufferSize = DEFAULT_BUFFER_SIZE, ignoreWavHeader = true): AsyncGenerator {

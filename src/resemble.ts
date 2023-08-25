@@ -22,6 +22,7 @@ export const Resemble = {
       all: ClipsV2.all,
       createSync: ClipsV2.createSync,
       createAsync: ClipsV2.createAsync,
+      createDirect: ClipsV2.createDirect,
       updateAsync: ClipsV2.updateAsync,
       // stream: ClipsV2.stream,
       get: ClipsV2.get,
