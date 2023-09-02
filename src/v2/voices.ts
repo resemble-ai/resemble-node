@@ -1,4 +1,11 @@
-import UtilV2, { DeleteResponseV2, ErrorResponseV2, PaginationResponseV2, ReadResponseV2, UpdateResponseV2, WriteResponseV2 } from "./util"
+import UtilV2, {
+  DeleteResponseV2,
+  ErrorResponseV2,
+  PaginationResponseV2,
+  ReadResponseV2,
+  UpdateResponseV2,
+  WriteResponseV2,
+} from './util'
 
 export interface Voice {
   uuid: string
@@ -14,26 +21,34 @@ export interface VoiceInput {
   name: string
   dataset_url?: string
   callback_uri?: string
-	consent?: string
+  consent?: string
 }
 
 export default {
-  all: async (page: number, pageSize: number): Promise<PaginationResponseV2<Voice> | ErrorResponseV2> => {
+  all: async (
+    page: number,
+    pageSize: number,
+  ): Promise<PaginationResponseV2<Voice> | ErrorResponseV2> => {
     try {
-      const response = await UtilV2.get(`voices?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`)
+      const response = await UtilV2.get(
+        `voices?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`,
+      )
       const json = await response.json()
-      if (json.success) json.items.map(item => ({
-        ...item,
-        created_at: new Date(item.created_at),
-        updated_at: new Date(item.updated_at)
-      }))
+      if (json.success)
+        json.items.map((item) => ({
+          ...item,
+          created_at: new Date(item.created_at),
+          updated_at: new Date(item.updated_at),
+        }))
       return json
     } catch (e) {
       return UtilV2.errorResponse(e)
     }
   },
-  
-  get: async (uuid: string): Promise<ReadResponseV2<Voice> | ErrorResponseV2> => {
+
+  get: async (
+    uuid: string,
+  ): Promise<ReadResponseV2<Voice> | ErrorResponseV2> => {
     try {
       const response = await UtilV2.get(`voices/${uuid}`)
       let json = await response.json()
@@ -43,8 +58,8 @@ export default {
           item: {
             ...json.item,
             created_at: new Date(json.item.created_at),
-            updated_at: new Date(json.item.updated_at)
-          }
+            updated_at: new Date(json.item.updated_at),
+          },
         }
       }
       return json
@@ -52,8 +67,10 @@ export default {
       return UtilV2.errorResponse(e)
     }
   },
-  
-  create: async (voiceInput: VoiceInput): Promise<WriteResponseV2<Voice> | ErrorResponseV2> => {
+
+  create: async (
+    voiceInput: VoiceInput,
+  ): Promise<WriteResponseV2<Voice> | ErrorResponseV2> => {
     try {
       const response = await UtilV2.post('voices', voiceInput)
       let json = await response.json()
@@ -63,8 +80,8 @@ export default {
           item: {
             ...json.item,
             created_at: new Date(json.item.created_at),
-            updated_at: new Date(json.item.updated_at)
-          }
+            updated_at: new Date(json.item.updated_at),
+          },
         }
       }
       return json
@@ -72,8 +89,11 @@ export default {
       return UtilV2.errorResponse(e)
     }
   },
-  
-  update: async (uuid: string, voiceInput: VoiceInput): Promise<UpdateResponseV2<Voice> | ErrorResponseV2> => {
+
+  update: async (
+    uuid: string,
+    voiceInput: VoiceInput,
+  ): Promise<UpdateResponseV2<Voice> | ErrorResponseV2> => {
     try {
       const response = await UtilV2.put(`voices/${uuid}`, voiceInput)
       let json = await response.json()
@@ -83,8 +103,8 @@ export default {
           item: {
             ...json.item,
             created_at: new Date(json.item.created_at),
-            updated_at: new Date(json.item.updated_at)
-          }
+            updated_at: new Date(json.item.updated_at),
+          },
         }
       }
       return json
@@ -92,8 +112,10 @@ export default {
       return UtilV2.errorResponse(e)
     }
   },
-  
-  destroy: async (uuid: string): Promise<DeleteResponseV2 | ErrorResponseV2> => {
+
+  destroy: async (
+    uuid: string,
+  ): Promise<DeleteResponseV2 | ErrorResponseV2> => {
     try {
       const response = await UtilV2.delete(`voices/${uuid}`)
       const json = response.json()
@@ -102,8 +124,10 @@ export default {
       return UtilV2.errorResponse(e)
     }
   },
-  
-  build: async (uuid: string): Promise<{ success: boolean, message?: string } | ErrorResponseV2> => {
+
+  build: async (
+    uuid: string,
+  ): Promise<{ success: boolean; message?: string } | ErrorResponseV2> => {
     try {
       const response = await UtilV2.post(`voices/${uuid}/build`)
       const json = response.json()
@@ -111,5 +135,5 @@ export default {
     } catch (e) {
       return UtilV2.errorResponse(e)
     }
-  }
+  },
 }

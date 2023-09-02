@@ -26,7 +26,7 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 npm run test
 ```
 
-# Publishing
+## Publishing
 
 1. `git status`: Make sure your working directory has no pending changes.
 2. Update the version key in `package.json`

@@ -4,12 +4,11 @@ import ClipsV2 from './v2/clips'
 import RecordingsV2 from './v2/recordings'
 import VoicesV2 from './v2/voices'
 
-
 export const Resemble = {
   setApiKey: context.setApiKey,
   setBaseUrl: context.setBaseUrl,
   setSynthesisUrl: context.setSynthesisUrl,
-  
+
   v2: {
     projects: {
       all: ProjectsV2.all,
@@ -24,7 +23,7 @@ export const Resemble = {
       createAsync: ClipsV2.createAsync,
       createDirect: ClipsV2.createDirect,
       updateAsync: ClipsV2.updateAsync,
-      // stream: ClipsV2.stream,
+      stream: ClipsV2.stream,
       get: ClipsV2.get,
       delete: ClipsV2.destroy,
     },
