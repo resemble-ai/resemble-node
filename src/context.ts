@@ -4,7 +4,8 @@ let synthesisServerUrl: string | undefined = ''
 
 const synthesisServerHeaders: Record<string, string> = {
   'Content-Type': 'application/json',
-  'x-access-token': `${apiKey}`,
+  Authorization: `Bearer ${apiKey}`,
+  'x-access-token': apiKey,
 }
 
 const headers: Record<string, string> = {
@@ -27,6 +28,7 @@ export const context = {
   setApiKey: (key: string) => {
     apiKey = key
     headers['Authorization'] = `Token token=${key}`
+    synthesisServerHeaders['Authorization'] = `Bearer ${key}`
     synthesisServerHeaders['x-access-token'] = key
   },
 
@@ -45,6 +47,7 @@ export const context = {
 
   synServerUrl: (endpoint) => {
     let ending = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint
-    return `${synthesisServerUrl}${ending}`
+    const url = `${synthesisServerUrl}${ending}`
+    return url
   },
 }
