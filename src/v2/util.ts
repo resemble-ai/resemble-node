@@ -1,4 +1,4 @@
-import { context } from "../context"
+import { context } from '../context'
 
 export interface ReadResponseV2<T> {
   success: boolean
@@ -26,11 +26,11 @@ export interface DeleteResponseV2 {
 }
 
 export interface PaginationResponseV2<T> {
-  success: boolean,
-  message?: string,
-  page: number,
-  num_pages: number,
-  page_size: number,
+  success: boolean
+  message?: string
+  page: number
+  num_pages: number
+  page_size: number
   items: T[]
 }
 
@@ -39,69 +39,69 @@ export interface ErrorResponseV2 {
   message: string
 }
 
-
 export default {
-  get: (path: string, useSynthesisServer: boolean = false) =>
-    fetch(
+  get: (path: string, useSynthesisServer: boolean = false) => {
+    return fetch(
       useSynthesisServer
         ? context.synServerUrl(path)
-        : context.endpoint("v2", path),
+        : context.endpoint('v2', path),
       {
-        method: "GET",
+        method: 'GET',
         headers: useSynthesisServer
           ? context.synthesisServerHeaders()
           : context.headers(),
-      }
-    ),
+      },
+    )
+  },
   post: (
     path: string,
     data: Record<string, any> = {},
-    useSynthesisServer: boolean = false
+    useSynthesisServer: boolean = false,
   ) =>
     fetch(
       useSynthesisServer
         ? context.synServerUrl(path)
-        : context.endpoint("v2", path),
+        : context.endpoint('v2', path),
       {
-        method: "POST",
+        method: 'POST',
         headers: useSynthesisServer
           ? context.synthesisServerHeaders()
           : context.headers(),
         body: JSON.stringify(data),
-      }
+      },
     ),
   put: (
     path: string,
     data: Record<string, any> = {},
-    useSynthesisServer: boolean = false
+    useSynthesisServer: boolean = false,
   ) =>
     fetch(
       useSynthesisServer
         ? context.synServerUrl(path)
-        : context.endpoint("v2", path),
+        : context.endpoint('v2', path),
       {
-        method: "PUT",
+        method: 'PUT',
         headers: useSynthesisServer
           ? context.synthesisServerHeaders()
           : context.headers(),
         body: JSON.stringify(data),
-      }
+      },
     ),
   delete: (path: string, useSynthesisServer: boolean = false) =>
     fetch(
       useSynthesisServer
         ? context.synServerUrl(path)
-        : context.endpoint("v2", path),
+        : context.endpoint('v2', path),
       {
-        method: "DELETE",
+        method: 'DELETE',
         headers: useSynthesisServer
           ? context.synthesisServerHeaders()
           : context.headers(),
-      }
+      },
     ),
 
   errorResponse: (e: any): ErrorResponseV2 => ({
     success: false,
-    message: `Library error: ${e}`
-  })
+    message: `Library error: ${e}`,
+  }),
 }

@@ -1,7 +1,7 @@
 {
   "name": "@resemble/node",
   "description": "Resemble API",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "type": "module",
   "source": "src/resemble.ts",
   "exports": {
@@ -15,16 +15,26 @@
   "types": "./dist/resemble.d.ts",
   "scripts": {
     "build": "microbundle",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky install",
+    "format": "prettier --config .prettierrc.json --ignore-path .prettierignore --check .",
+    "format:fix": "prettier --config .prettierrc.json --ignore-path .prettierignore --write ."
   },
   "devDependencies": {
     "@types/jest": "^28.1.6",
+    "husky": "^8.0.3",
     "jest": "^28.1.3",
-    "microbundle": "^0.15.0"
+    "lint-staged": "^14.0.1",
+    "microbundle": "^0.15.0",
+    "prettier": "3.0.3"
   },
   "dependencies": {
+    "dotenv": "^16.3.1",
     "isomorphic-fetch": "^3.0.0",
     "isomorphic-form-data": "^2.0.0"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "files": [
     "dist"

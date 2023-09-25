@@ -4,18 +4,19 @@ let synthesisServerUrl: string | undefined = ''
 
 const synthesisServerHeaders: Record<string, string> = {
   'Content-Type': 'application/json',
-  'x-access-token': `${apiKey}`
+  Authorization: `Bearer ${apiKey}`,
+  'x-access-token': apiKey,
 }
 
 const headers: Record<string, string> = {
   'Content-Type': 'application/json',
-  'Authorization': `Token token=${apiKey}`
+  Authorization: `Token token=${apiKey}`,
 }
 
 export const context = {
   headers: () => headers,
   synthesisServerHeaders: () => synthesisServerHeaders,
-  
+
   setBaseUrl: (url: string) => {
     baseUrl = url
 
@@ -27,24 +28,26 @@ export const context = {
   setApiKey: (key: string) => {
     apiKey = key
     headers['Authorization'] = `Token token=${key}`
+    synthesisServerHeaders['Authorization'] = `Bearer ${key}`
     synthesisServerHeaders['x-access-token'] = key
   },
-  
+
   setSynthesisUrl: (url: string) => {
     synthesisServerUrl = url
-    
+
     if (!url.endsWith('/')) {
       synthesisServerUrl += '/'
     }
   },
-  
+
   endpoint: (version: string, endpoint: string): string => {
     let ending = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint
     return `${baseUrl}${version}/${ending}`
   },
-  
+
   synServerUrl: (endpoint) => {
     let ending = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint
-    return `${synthesisServerUrl}${ending}`
-  }
-}  
+    const url = `${synthesisServerUrl}${ending}`
+    return url
+  },
+}
