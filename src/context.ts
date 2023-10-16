@@ -4,7 +4,6 @@ let synthesisServerUrl: string | undefined = ''
 
 const synthesisServerHeaders: Record<string, string> = {
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${apiKey}`,
   'x-access-token': apiKey,
 }
 
@@ -28,7 +27,6 @@ export const context = {
   setApiKey: (key: string) => {
     apiKey = key
     headers['Authorization'] = `Token token=${key}`
-    synthesisServerHeaders['Authorization'] = `Bearer ${key}`
     synthesisServerHeaders['x-access-token'] = key
   },
 

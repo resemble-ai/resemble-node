@@ -55,6 +55,7 @@ test('streaming', async () => {
     data: 'This is a test',
   })) {
     expect(chunk).not.toBeNull()
+    expect(chunk).toBeInstanceOf(Buffer)
   }
 })
 
