@@ -185,9 +185,14 @@ export default {
     },
     bufferSize = DEFAULT_BUFFER_SIZE,
     ignoreWavHeader = true,
+    wav_encoded_timestamps = false,
   ): AsyncGenerator {
     try {
-      const response = await UtilV2.post('stream', streamInput, true)
+      const response = await UtilV2.post(
+        'stream',
+        { ...streamInput, wav_encoded_timestamps },
+        true,
+      )
 
       // check for error response
       if (!response.ok || !response.body) {
