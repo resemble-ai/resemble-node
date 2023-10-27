@@ -1,7 +1,7 @@
 {
   "name": "@resemble/node",
   "description": "Resemble API",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "type": "module",
   "source": "src/resemble.ts",
   "exports": {

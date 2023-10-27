@@ -1,5 +1,5 @@
 export const DEFAULT_BUFFER_SIZE = 4 * 1024
-export const STREAMING_WAV_HEADER_BUFFER_LEN = 44
+export const STREAMING_WAV_HEADER_BUFFER_LEN = 36
 
 export const StreamDecoder = function (
   bufferSize = DEFAULT_BUFFER_SIZE,
@@ -32,13 +32,10 @@ StreamDecoder.prototype.setIgnoreWavHeader = function (val) {
 }
 
 StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
-  // 1. User wants headers. no timestamps have been requested, we can store the chunks as they come
+  // 1. assume user wants headers. no timestamps have been requested, we can store the chunks as they come
   this.chunks.push(chunk)
-  if (this.processTimeStamps && !this.allTimestampsProcessed) {
-    this.timeStampsBuffer.push(chunk)
-  }
 
-  // 2. user does not need headers and timestamps are also not present, so we ignore the 44 bytes (wav header size) and return the rest
+  // 2. user does not need headers and timestamps are also not present, so we ignore the 36 bytes (wav header size) and return the rest
   if (
     this.headerBuffer.length < STREAMING_WAV_HEADER_BUFFER_LEN && // check if header has been processed
     this.ignoreWavHeader && // Check if header should be ignored
@@ -54,13 +51,66 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
     }
   }
 
-  // 3. user wants timestamps and headers too: process the timestamps
+  // timestamps are present, keep storing them untill all timestamps have been processed
+  if (this.processTimeStamps && !this.allTimestampsProcessed) {
+    this.timeStampsBuffer.push(chunk)
+  }
+
+  // 3. user wants timestamps and headers: process the timestamps, preserve the 36 bytes and discard the timestamp bytes
   if (!this.ignoreWavHeader && this.processTimeStamps) {
     if (!this.allTimestampsProcessed) {
       const tempBuf = Buffer.concat(this.timeStampsBuffer)
-      const obj = extractTimestampsFromBuffer(tempBuf)
 
+      const obj = this.extractTimestampsFromBuffer(tempBuf)
+
+      // we ran past the buffer length, just preserve the header for now
+      if (!obj.timestamps) {
+        // no wav headers yet, obtain it:
+        if (this.headerBuffer.length < STREAMING_WAV_HEADER_BUFFER_LEN) {
+          const tempBuf = Buffer.concat(this.chunks)
+          if (tempBuf.length >= STREAMING_WAV_HEADER_BUFFER_LEN) {
+            this.headerBuffer = tempBuf.slice(
+              0,
+              STREAMING_WAV_HEADER_BUFFER_LEN,
+            )
+
+            this.chunks = []
+            this.chunks.push(this.headerBuffer)
+          }
+        } else {
+          // since header exists and we don't have timestamps yet, it means we can reset the chunk to only contain the header
+          this.chunks = []
+          this.chunks.push(this.headerBuffer)
+        }
+      }
+
+      // timestamps are present, process them
       if (obj.timestamps && obj.timestamps !== null) {
+        if (this.headerBuffer.length < STREAMING_WAV_HEADER_BUFFER_LEN) {
+          // header not processed yet, process it and discard the timestamps bytes. also process the data bytes if any in current chunk
+          const tempBuf = Buffer.concat(this.chunks)
+          if (tempBuf.length >= STREAMING_WAV_HEADER_BUFFER_LEN) {
+            this.headerBuffer = tempBuf.slice(
+              0,
+              STREAMING_WAV_HEADER_BUFFER_LEN,
+            )
+
+            this.chunks = []
+            const tempDataBuffer = tempBuf.slice(obj.offset)
+            this.chunks.push(this.headerBuffer)
+            this.chunks.push(tempDataBuffer)
+          }
+        } else {
+          // header has already been processed, discard the timestamps bytes and preserve wav header and the data bytes if any
+          const tempBuf = Buffer.concat(this.timeStampsBuffer)
+          const tempDataBuffer = tempBuf.slice(obj.offset)
+
+          this.chunks = []
+          this.chunks.push(this.headerBuffer)
+          this.chunks.push(tempDataBuffer)
+        }
+
+        // mark all timestamps as processed
         this.timeStamps = obj.timestamps
         this.allTimestampsProcessed = true
         this.timeStampsBuffer = []
@@ -68,12 +118,16 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
     }
   }
 
-  // 4. timestamps are present and have been requested but no headers are wanted: process the timestamps and ignore wav header + timestamps chunks
+  // 4. TODO: timestamps are present and have been requested but no headers are wanted
   if (this.ignoreWavHeader && this.processTimeStamps) {
-    // TODO: fix headers deletion
     if (!this.allTimestampsProcessed) {
       const tempBuf = Buffer.concat(this.timeStampsBuffer)
-      const obj = extractTimestampsFromBuffer(tempBuf)
+      const obj = this.extractTimestampsFromBuffer(tempBuf)
+
+      if (!obj.timestamps && obj.offset) {
+        // delete the bytes upto the offset from the chunks about to be flushed
+        this.chunks = []
+      }
 
       if (obj.timestamps && obj.timestamps !== null) {
         this.timeStamps = obj.timestamps
@@ -115,7 +169,9 @@ StreamDecoder.prototype.getTimestamps = function () {
   return null
 }
 
-function extractTimestampsFromBuffer(buffer: Buffer) {
+StreamDecoder.prototype.extractTimestampsFromBuffer = function (
+  buffer: Buffer,
+) {
   let offset = 0
   offset += 4 // Skip RIFF ID
 
