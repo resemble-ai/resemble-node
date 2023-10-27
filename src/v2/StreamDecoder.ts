@@ -118,7 +118,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
     }
   }
 
-  // 4. TODO: timestamps are present and have been requested but no headers are wanted
+  // 4. timestamps are present and have been requested but no headers are wanted
   if (this.ignoreWavHeader && this.processTimeStamps) {
     if (!this.allTimestampsProcessed) {
       const tempBuf = Buffer.concat(this.timeStampsBuffer)
