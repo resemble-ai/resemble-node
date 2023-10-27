@@ -185,12 +185,12 @@ export default {
     },
     bufferSize = DEFAULT_BUFFER_SIZE,
     ignoreWavHeader = true,
-    wav_encoded_timestamps = false,
+    getTimeStamps = false,
   ): AsyncGenerator {
     try {
       const response = await UtilV2.post(
         'stream',
-        { ...streamInput, wav_encoded_timestamps },
+        { ...streamInput, wav_encoded_timestamps: getTimeStamps },
         true,
       )
 
@@ -204,7 +204,11 @@ export default {
         throw Error(error)
       }
 
-      const streamDecoder = new StreamDecoder(bufferSize, ignoreWavHeader)
+      const streamDecoder = new StreamDecoder(
+        bufferSize,
+        ignoreWavHeader,
+        getTimeStamps,
+      )
       streamDecoder.reset()
 
       const reader = response.body.getReader()
@@ -218,7 +222,12 @@ export default {
 
           streamDecoder.decodeChunk(value)
           const buffer = streamDecoder.flushBuffer()
-          if (buffer !== null) yield buffer
+          if (buffer !== null) {
+            yield {
+              data: buffer,
+              timestamps: streamDecoder.getTimestamps(),
+            }
+          }
         }
       } finally {
         reader.releaseLock()
@@ -229,12 +238,19 @@ export default {
       while (buffer !== null) {
         const buffToReturn = Buffer.from(buffer)
         buffer = streamDecoder.flushBuffer()
-        yield buffToReturn
+        yield {
+          data: buffToReturn,
+          timestamps: streamDecoder.getTimestamps(),
+        }
       }
 
       // Drain any leftover content in the buffer, buffer.length will always be less than bufferSize here
       buffer = streamDecoder.flushBuffer(true)
-      if (buffer !== null) yield buffer
+      if (buffer !== null)
+        yield {
+          data: buffer,
+          timestamps: streamDecoder.getTimestamps(),
+        }
     } catch (e) {
       // If an error occurs and the catch block is executed, the function will return a plain object (UtilV2.errorResponse(e)).
       // This will cause the function to not return an async iterable, leading to an error, so we need to throw the error
