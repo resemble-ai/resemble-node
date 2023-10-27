@@ -125,7 +125,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
       const obj = this.extractTimestampsFromBuffer(tempBuf)
 
       if (!obj.timestamps && obj.offset) {
-        // delete the bytes upto the offset from the chunks about to be flushed
+        // we haven't reached the data section yet, discard evrything
         this.chunks = []
       }
 
