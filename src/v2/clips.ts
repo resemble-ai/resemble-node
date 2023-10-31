@@ -80,6 +80,12 @@ export interface StreamInput {
   voice_uuid: string
 }
 
+export interface StreamConfig {
+  bufferSize?: number
+  ignoreWavHeader?: boolean
+  getTimeStamps?: boolean
+}
+
 const create = async (projectUuid: string, clipInput: ClipInput) => {
   try {
     const response = await UtilV2.post(
@@ -178,19 +184,29 @@ export default {
   },
 
   stream: async function* (
-    streamInput: {
-      data: string
-      project_uuid: string
-      voice_uuid: string
-    },
-    bufferSize = DEFAULT_BUFFER_SIZE,
-    ignoreWavHeader = true,
-    getTimeStamps = false,
+    streamInput: StreamInput,
+    streamConfig: StreamConfig | undefined,
   ): AsyncGenerator {
+    const defaultStreamConfig = {
+      bufferSize: DEFAULT_BUFFER_SIZE,
+      ignoreWavHeader: false,
+      getTimeStamps: false,
+    }
+
+    const getTimeStamps =
+      streamConfig?.getTimeStamps || defaultStreamConfig.getTimeStamps
+    const bufferSize =
+      streamConfig?.bufferSize || defaultStreamConfig.bufferSize
+    const ignoreWavHeader =
+      streamConfig?.ignoreWavHeader || defaultStreamConfig.ignoreWavHeader
+
     try {
       const response = await UtilV2.post(
         'stream',
-        { ...streamInput, wav_encoded_timestamps: getTimeStamps },
+        {
+          ...streamInput,
+          wav_encoded_timestamps: getTimeStamps,
+        },
         true,
       )
 
