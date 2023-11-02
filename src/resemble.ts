@@ -45,9 +45,9 @@ export const Resemble = {
     },
     batch: {
       all: BatchV2.all,
-      get: BatchV2.all,
+      get: BatchV2.get,
       create: BatchV2.create,
-      delete: BatchV2.all,
+      delete: BatchV2.delete,
     },
   },
 }

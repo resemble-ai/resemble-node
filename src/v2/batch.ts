@@ -78,6 +78,36 @@ export default {
       return UtilV2.errorResponse(error)
     }
   },
-  get: async () => {},
-  delete: async () => {},
+  get: async (projectUuid: string, batchUuid: string) => {
+    try {
+      const response = await UtilV2.get(
+        `projects/${projectUuid}/batch/${batchUuid}`,
+      )
+      let json = await response.json()
+      if (json.success) {
+        json = {
+          ...json,
+          item: {
+            ...json.item,
+            created_at: new Date(json.item.created_at),
+            updated_at: new Date(json.item.updated_at),
+          },
+        }
+      }
+      return json
+    } catch (e) {
+      return UtilV2.errorResponse(e)
+    }
+  },
+  delete: async (projectUuid: string, batchUuid: string) => {
+    try {
+      const response = await UtilV2.delete(
+        `projects/${projectUuid}/batch/${batchUuid}`,
+      )
+      const json = response.json()
+      return json
+    } catch (e) {
+      return UtilV2.errorResponse(e)
+    }
+  },
 }
