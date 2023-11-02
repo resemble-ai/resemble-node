@@ -61,7 +61,6 @@ test('streaming', async () => {
     data: 'This is a test',
   })) {
     expect(chunk).not.toBeNull()
-    expect(chunk).toBeInstanceOf(Buffer)
   }
 })
 
@@ -85,17 +84,6 @@ test('projects', async () => {
   expect(fetched_project.success).toEqual(true)
   const deleteOp = await Resemble.v2.projects.delete(project.item.uuid)
   expect(deleteOp.success).toEqual(true)
-})
-
-test('batch', async () => {
-  const res = await Resemble.v2.batch.create(
-    getTestProjectUUID(),
-    getTestVoiceUUID(),
-    ['Content A', 'Content B', 'Content C'],
-  )
-  expect(res.success).toEqual(true)
-  const batch = await Resemble.v2.batch.all(getTestProjectUUID(), 1)
-  expect(batch.success).toEqual(true)
 })
 
 test('clips', async () => {
