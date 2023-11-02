@@ -80,6 +80,12 @@ export interface StreamInput {
   voice_uuid: string
 }
 
+export interface StreamConfig {
+  bufferSize?: number
+  ignoreWavHeader?: boolean
+  getTimeStamps?: boolean
+}
+
 const create = async (projectUuid: string, clipInput: ClipInput) => {
   try {
     const response = await UtilV2.post(
@@ -178,16 +184,31 @@ export default {
   },
 
   stream: async function* (
-    streamInput: {
-      data: string
-      project_uuid: string
-      voice_uuid: string
-    },
-    bufferSize = DEFAULT_BUFFER_SIZE,
-    ignoreWavHeader = true,
+    streamInput: StreamInput,
+    streamConfig: StreamConfig | undefined,
   ): AsyncGenerator {
+    const defaultStreamConfig = {
+      bufferSize: DEFAULT_BUFFER_SIZE,
+      ignoreWavHeader: false,
+      getTimeStamps: false,
+    }
+
+    const getTimeStamps =
+      streamConfig?.getTimeStamps || defaultStreamConfig.getTimeStamps
+    const bufferSize =
+      streamConfig?.bufferSize || defaultStreamConfig.bufferSize
+    const ignoreWavHeader =
+      streamConfig?.ignoreWavHeader || defaultStreamConfig.ignoreWavHeader
+
     try {
-      const response = await UtilV2.post('stream', streamInput, true)
+      const response = await UtilV2.post(
+        'stream',
+        {
+          ...streamInput,
+          wav_encoded_timestamps: getTimeStamps,
+        },
+        true,
+      )
 
       // check for error response
       if (!response.ok || !response.body) {
@@ -199,7 +220,11 @@ export default {
         throw Error(error)
       }
 
-      const streamDecoder = new StreamDecoder(bufferSize, ignoreWavHeader)
+      const streamDecoder = new StreamDecoder(
+        bufferSize,
+        ignoreWavHeader,
+        getTimeStamps,
+      )
       streamDecoder.reset()
 
       const reader = response.body.getReader()
@@ -213,7 +238,12 @@ export default {
 
           streamDecoder.decodeChunk(value)
           const buffer = streamDecoder.flushBuffer()
-          if (buffer !== null) yield buffer
+          if (buffer !== null) {
+            yield {
+              data: buffer,
+              timestamps: streamDecoder.getTimestamps(),
+            }
+          }
         }
       } finally {
         reader.releaseLock()
@@ -224,12 +254,19 @@ export default {
       while (buffer !== null) {
         const buffToReturn = Buffer.from(buffer)
         buffer = streamDecoder.flushBuffer()
-        yield buffToReturn
+        yield {
+          data: buffToReturn,
+          timestamps: streamDecoder.getTimestamps(),
+        }
       }
 
       // Drain any leftover content in the buffer, buffer.length will always be less than bufferSize here
       buffer = streamDecoder.flushBuffer(true)
-      if (buffer !== null) yield buffer
+      if (buffer !== null)
+        yield {
+          data: buffer,
+          timestamps: streamDecoder.getTimestamps(),
+        }
     } catch (e) {
       // If an error occurs and the catch block is executed, the function will return a plain object (UtilV2.errorResponse(e)).
       // This will cause the function to not return an async iterable, leading to an error, so we need to throw the error
