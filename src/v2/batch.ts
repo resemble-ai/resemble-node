@@ -31,6 +31,7 @@ export default {
           created_at: new Date(item.created_at),
           updated_at: new Date(item.updated_at),
         }))
+        json.success = true
       }
       return json
     } catch (error) {

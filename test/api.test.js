@@ -9,6 +9,12 @@ const getTestVoiceUUID = () => {
   return process.env.TEST_VOICE_UUID
 }
 
+const getTestProjectUUID = () => {
+  if (!process.env.TEST_PROJECT_UUID)
+    throw 'Invalid voice UUID specified; please set the TEST_VOICE_UUID environment variable'
+  return process.env.TEST_PROJECT_UUID
+}
+
 const getTestBaseURL = () => {
   if (!process.env.TEST_BASE_URL) {
     console.log(
@@ -79,6 +85,17 @@ test('projects', async () => {
   expect(fetched_project.success).toEqual(true)
   const deleteOp = await Resemble.v2.projects.delete(project.item.uuid)
   expect(deleteOp.success).toEqual(true)
+})
+
+test('batch', async () => {
+  const res = await Resemble.v2.batch.create(
+    getTestProjectUUID(),
+    getTestVoiceUUID(),
+    ['Content A', 'Content B', 'Content C'],
+  )
+  expect(res.success).toEqual(true)
+  const batch = await Resemble.v2.batch.all(getTestProjectUUID(), 1)
+  expect(batch.success).toEqual(true)
 })
 
 test('clips', async () => {
