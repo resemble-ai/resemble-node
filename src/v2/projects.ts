@@ -35,13 +35,16 @@ export default {
       const response = await UtilV2.get(
         `projects?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`,
       )
-      const json = await response.json()
-      if (json.success)
-        json.items.map((item) => ({
+      let json = await response.json()
+      if (json.success) {
+        json = json.items.map((item) => ({
           ...item,
           created_at: new Date(item.created_at),
           updated_at: new Date(item.updated_at),
         }))
+        json.success = true
+      }
+
       return json
     } catch (e) {
       return UtilV2.errorResponse(e)
