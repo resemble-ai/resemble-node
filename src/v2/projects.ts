@@ -37,12 +37,11 @@ export default {
       )
       let json = await response.json()
       if (json.success) {
-        json = json.items.map((item) => ({
+        json.items = json.items.map((item) => ({
           ...item,
           created_at: new Date(item.created_at),
           updated_at: new Date(item.updated_at),
         }))
-        json.success = true
       }
 
       return json
