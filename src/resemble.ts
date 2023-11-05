@@ -3,6 +3,7 @@ import ProjectsV2 from './v2/projects'
 import ClipsV2 from './v2/clips'
 import RecordingsV2 from './v2/recordings'
 import VoicesV2 from './v2/voices'
+import BatchV2 from './v2/batch'
 
 export const Resemble = {
   setApiKey: context.setApiKey,
@@ -41,6 +42,12 @@ export const Resemble = {
       create: RecordingsV2.create,
       update: RecordingsV2.update,
       delete: RecordingsV2.destroy,
+    },
+    batch: {
+      all: BatchV2.all,
+      get: BatchV2.get,
+      create: BatchV2.create,
+      delete: BatchV2.delete,
     },
   },
 }

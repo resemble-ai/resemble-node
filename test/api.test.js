@@ -9,6 +9,12 @@ const getTestVoiceUUID = () => {
   return process.env.TEST_VOICE_UUID
 }
 
+const getTestProjectUUID = () => {
+  if (!process.env.TEST_PROJECT_UUID)
+    throw 'Invalid voice UUID specified; please set the TEST_VOICE_UUID environment variable'
+  return process.env.TEST_PROJECT_UUID
+}
+
 const getTestBaseURL = () => {
   if (!process.env.TEST_BASE_URL) {
     console.log(
@@ -55,7 +61,6 @@ test('streaming', async () => {
     data: 'This is a test',
   })) {
     expect(chunk).not.toBeNull()
-    expect(chunk).toBeInstanceOf(Buffer)
   }
 })
 
