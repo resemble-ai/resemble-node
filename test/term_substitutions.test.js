@@ -48,21 +48,21 @@ beforeAll(() => {
   getTestProjectUUID()
 })
 
-test('phoneme', async () => {
+test('substitutions', async () => {
   // create a term substitution
-  const res = await Resemble.v2.termSubstitutions.create('hello', 'ello')
+  const res = await Resemble.v2.substitutions.create('crow', 'krow')
   expect(res.success).toEqual(true)
   expect(res.item).toBeDefined()
   expect(res.item.original_text).toBeString()
   expect(res.item.replacement_text).toBeString()
 
   // get all term substitutions
-  const res2 = await Resemble.v2.termSubstitutions.all(1)
+  const res2 = await Resemble.v2.substitutions.all(1)
   expect(res2.success).toEqual(true)
   expect(res2.items).toBeArray()
   expect(res2.items.length).toBeGreaterThan(0)
 
   // delete term substitution
-  const res3 = await Resemble.v2.termSubstitutions.delete(res.item.uuid)
+  const res3 = await Resemble.v2.substitutions.delete(res.item.uuid)
   expect(res3.success).toEqual(true)
 })

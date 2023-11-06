@@ -5,7 +5,7 @@ import RecordingsV2 from './v2/recordings'
 import VoicesV2 from './v2/voices'
 import BatchV2 from './v2/batch'
 import PhonemesV2 from './v2/phonemes'
-import TermSubstitutionsV2 from './v2/term_substitutions'
+import TermSubstitutionsV2 from './v2/substitutions'
 
 export const Resemble = {
   setApiKey: context.setApiKey,
@@ -56,7 +56,7 @@ export const Resemble = {
       create: PhonemesV2.create,
       delete: PhonemesV2.delete,
     },
-    termSubstitutions: {
+    substitutions: {
       all: TermSubstitutionsV2.all,
       create: TermSubstitutionsV2.create,
       delete: TermSubstitutionsV2.delete,
