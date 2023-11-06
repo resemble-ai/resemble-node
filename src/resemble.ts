@@ -4,6 +4,7 @@ import ClipsV2 from './v2/clips'
 import RecordingsV2 from './v2/recordings'
 import VoicesV2 from './v2/voices'
 import BatchV2 from './v2/batch'
+import PhonemesV2 from './v2/phonemes'
 
 export const Resemble = {
   setApiKey: context.setApiKey,
@@ -48,6 +49,11 @@ export const Resemble = {
       get: BatchV2.get,
       create: BatchV2.create,
       delete: BatchV2.delete,
+    },
+    phonemes: {
+      all: PhonemesV2.all,
+      create: PhonemesV2.create,
+      delete: PhonemesV2.delete,
     },
   },
 }
