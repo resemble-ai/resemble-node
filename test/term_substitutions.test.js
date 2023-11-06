@@ -49,21 +49,20 @@ beforeAll(() => {
 })
 
 test('phoneme', async () => {
-  // create a phoneme
-  const res = await Resemble.v2.phonemes.create('three', 'θɹiː')
+  // create a term substitution
+  const res = await Resemble.v2.termSubstitutions.create('hello', 'ello')
   expect(res.success).toEqual(true)
   expect(res.item).toBeDefined()
-  expect(res.item.alphabet).toEqual('ipa')
-  expect(res.item.word).toBeString()
-  expect(res.item.phonetic_transcription).toBeString()
+  expect(res.item.original_text).toBeString()
+  expect(res.item.replacement_text).toBeString()
 
-  // get all phonemes
-  const res2 = await Resemble.v2.phonemes.all(1)
+  // get all term substitutions
+  const res2 = await Resemble.v2.termSubstitutions.all(1)
   expect(res2.success).toEqual(true)
   expect(res2.items).toBeArray()
   expect(res2.items.length).toBeGreaterThan(0)
 
-  // delete phoneme
-  const res3 = await Resemble.v2.phonemes.delete(res.item.uuid)
+  // delete term substitution
+  const res3 = await Resemble.v2.termSubstitutions.delete(res.item.uuid)
   expect(res3.success).toEqual(true)
 })

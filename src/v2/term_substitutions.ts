@@ -1,34 +1,37 @@
 import UtilV2, { ErrorResponseV2, PaginationResponseV2 } from './util'
 
-export interface Phoneme {
+export interface TermSubstitution {
   uuid: string
-  alphabet: string
-  word: string
-  phonetic_transcription: string
+  original_text: string
+  replacement_text: string
   created_at: Date
   updated_at: Date
 }
 
-export interface AllPhonemeResponse {
+export interface AllTermSubstitutionResponse {
   success: boolean
   page: number
   num_pages: number
   page_size: number
-  items: Phoneme[]
+  items: TermSubstitution[]
 }
 
 export default {
   all: async (
     page: number,
     pageSize?: number,
-  ): Promise<PaginationResponseV2<AllPhonemeResponse> | ErrorResponseV2> => {
+  ): Promise<
+    PaginationResponseV2<AllTermSubstitutionResponse> | ErrorResponseV2
+  > => {
     try {
       const response = await UtilV2.get(
-        `phonemes?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`,
+        `term_substitutions?page=${page}${
+          pageSize ? `&page_size=${pageSize}` : ''
+        }`,
       )
       let json = await response.json()
       if (json.success) {
-        json.items = json.items.map((item: Phoneme) => ({
+        json.items = json.items.map((item: TermSubstitution) => ({
           ...item,
           created_at: new Date(item.created_at),
           updated_at: new Date(item.updated_at),
@@ -39,11 +42,11 @@ export default {
       return UtilV2.errorResponse(error)
     }
   },
-  create: async (word: string, phonetic_transcription: string) => {
+  create: async (original_text: string, replacement_text: string) => {
     try {
-      const response = await UtilV2.post('phonemes', {
-        word,
-        phonetic_transcription,
+      const response = await UtilV2.post('term_substitutions', {
+        original_text,
+        replacement_text,
       })
       let json = await response.json()
       if (json.success) {
@@ -58,9 +61,11 @@ export default {
       return UtilV2.errorResponse(error)
     }
   },
-  delete: async (phoneme_uuid: string) => {
+  delete: async (term_substitution_uuid: string) => {
     try {
-      const response = await UtilV2.delete(`phonemes/${phoneme_uuid}`)
+      const response = await UtilV2.delete(
+        `term_substitutions/${term_substitution_uuid}`,
+      )
       const json = response.json()
       return json
     } catch (error) {
