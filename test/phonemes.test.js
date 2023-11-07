@@ -50,7 +50,7 @@ beforeAll(() => {
 
 test('phoneme', async () => {
   // create a phoneme
-  const res = await Resemble.v2.phonemes.create('three', 'θɹiː')
+  const res = await Resemble.v2.phonemes.create('try', 'θɹiː')
   expect(res.success).toEqual(true)
   expect(res.item).toBeDefined()
   expect(res.item.alphabet).toEqual('ipa')
@@ -62,6 +62,12 @@ test('phoneme', async () => {
   expect(res2.success).toEqual(true)
   expect(res2.items).toBeArray()
   expect(res2.items.length).toBeGreaterThan(0)
+
+  // get a phoneme
+  const ph = await Resemble.v2.phonemes.get(res.item.uuid)
+  expect(ph.success).toEqual(true)
+  expect(ph.item).toBeDefined()
+  expect(ph.item.uuid).toEqual(res.item.uuid)
 
   // delete phoneme
   const res3 = await Resemble.v2.phonemes.delete(res.item.uuid)

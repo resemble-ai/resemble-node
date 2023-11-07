@@ -61,10 +61,28 @@ export default {
       return UtilV2.errorResponse(error)
     }
   },
-  delete: async (term_substitution_uuid: string) => {
+  get: async (termSubstitutionUuid: string) => {
+    try {
+      const response = await UtilV2.get(
+        `term_substitutions/${termSubstitutionUuid}`,
+      )
+      let json = await response.json()
+      if (json.success) {
+        json.item = {
+          ...json.item,
+          created_at: new Date(json.item.created_at),
+          updated_at: new Date(json.item.updated_at),
+        }
+      }
+      return json
+    } catch (error) {
+      return UtilV2.errorResponse(error)
+    }
+  },
+  delete: async (termSubstitutionUuid: string) => {
     try {
       const response = await UtilV2.delete(
-        `term_substitutions/${term_substitution_uuid}`,
+        `term_substitutions/${termSubstitutionUuid}`,
       )
       const json = response.json()
       return json

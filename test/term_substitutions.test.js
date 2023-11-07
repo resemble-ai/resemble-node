@@ -50,7 +50,7 @@ beforeAll(() => {
 
 test('substitutions', async () => {
   // create a term substitution
-  const res = await Resemble.v2.termSubstitutions.create('syn', 'sin')
+  const res = await Resemble.v2.termSubstitutions.create('gray', 'grey')
   expect(res.success).toEqual(true)
   expect(res.item).toBeDefined()
   expect(res.item.original_text).toBeString()
@@ -61,6 +61,12 @@ test('substitutions', async () => {
   expect(res2.success).toEqual(true)
   expect(res2.items).toBeArray()
   expect(res2.items.length).toBeGreaterThan(0)
+
+  // get a term substitution
+  const ts = await Resemble.v2.termSubstitutions.get(res.item.uuid)
+  expect(ts.success).toEqual(true)
+  expect(ts.item).toBeDefined()
+  expect(ts.item.uuid).toEqual(res.item.uuid)
 
   // delete term substitution
   const res3 = await Resemble.v2.termSubstitutions.delete(res.item.uuid)

@@ -58,6 +58,22 @@ export default {
       return UtilV2.errorResponse(error)
     }
   },
+  get: async (phonemeUuid: string) => {
+    try {
+      const response = await UtilV2.get(`phonemes/${phonemeUuid}`)
+      let json = await response.json()
+      if (json.success) {
+        json.item = {
+          ...json.item,
+          created_at: new Date(json.item.created_at),
+          updated_at: new Date(json.item.updated_at),
+        }
+      }
+      return json
+    } catch (error) {
+      return UtilV2.errorResponse(error)
+    }
+  },
   delete: async (phoneme_uuid: string) => {
     try {
       const response = await UtilV2.delete(`phonemes/${phoneme_uuid}`)

@@ -54,10 +54,12 @@ export const Resemble = {
     phonemes: {
       all: PhonemesV2.all,
       create: PhonemesV2.create,
+      get: PhonemesV2.get,
       delete: PhonemesV2.delete,
     },
     termSubstitutions: {
       all: TermSubstitutionsV2.all,
+      get: TermSubstitutionsV2.get,
       create: TermSubstitutionsV2.create,
       delete: TermSubstitutionsV2.delete,
     },
