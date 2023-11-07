@@ -200,8 +200,6 @@ export default {
     const ignoreWavHeader =
       streamConfig?.ignoreWavHeader || defaultStreamConfig.ignoreWavHeader
 
-    console.log(getTimeStamps, bufferSize, ignoreWavHeader)
-
     try {
       const response = await UtilV2.post(
         'stream',
