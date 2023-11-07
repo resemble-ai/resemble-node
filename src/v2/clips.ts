@@ -78,6 +78,8 @@ export interface StreamInput {
   data: string
   project_uuid: string
   voice_uuid: string
+  sample_rate?: 8000 | 16000 | 22050 | 44100 | 32000
+  precision?: 'MULAW' | 'PCM_16' | 'PCM_32'
 }
 
 export interface StreamConfig {
