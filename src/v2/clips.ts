@@ -185,7 +185,7 @@ export default {
 
   stream: async function* (
     streamInput: StreamInput,
-    streamConfig: StreamConfig | undefined,
+    streamConfig?: StreamConfig,
   ): AsyncGenerator {
     const defaultStreamConfig = {
       bufferSize: DEFAULT_BUFFER_SIZE,
