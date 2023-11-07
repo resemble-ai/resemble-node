@@ -185,7 +185,7 @@ export default {
 
   stream: async function* (
     streamInput: StreamInput,
-    streamConfig: StreamConfig | undefined,
+    streamConfig?: StreamConfig,
   ): AsyncGenerator {
     const defaultStreamConfig = {
       bufferSize: DEFAULT_BUFFER_SIZE,
@@ -199,6 +199,8 @@ export default {
       streamConfig?.bufferSize || defaultStreamConfig.bufferSize
     const ignoreWavHeader =
       streamConfig?.ignoreWavHeader || defaultStreamConfig.ignoreWavHeader
+
+    console.log(getTimeStamps, bufferSize, ignoreWavHeader)
 
     try {
       const response = await UtilV2.post(
