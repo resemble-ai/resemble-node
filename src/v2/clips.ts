@@ -254,7 +254,7 @@ export default {
       // Keep draining the buffer until the buffer.length < bufferSize or buffer.length == 0
       let buffer = streamDecoder.flushBuffer()
       while (buffer !== null) {
-        const buffToReturn = Buffer.from(buffer)
+        const buffToReturn = new Uint8Array(buffer)
         buffer = streamDecoder.flushBuffer()
         yield {
           data: buffToReturn,
