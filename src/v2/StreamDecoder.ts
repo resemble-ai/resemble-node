@@ -1,3 +1,5 @@
+import { concatUint8Arrays } from './util'
+
 export const DEFAULT_BUFFER_SIZE = 4 * 1024
 export const STREAMING_WAV_HEADER_BUFFER_LEN = 36
 
@@ -12,7 +14,7 @@ export const StreamDecoder = function (
   this.bufferSize = bufferSize
   this.ignoreWavHeader = ignoreWavHeader
   this.chunks = []
-  this.headerBuffer = Buffer.from('')
+  this.headerBuffer = new Uint8Array()
 
   this.processTimeStamps = timeStampsProcessingRequired
   this.timeStampsBuffer = []
@@ -41,7 +43,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
     this.ignoreWavHeader && // Check if header should be ignored
     !this.processTimeStamps
   ) {
-    const tempBuf = Buffer.concat(this.chunks)
+    const tempBuf = concatUint8Arrays(this.chunks)
     if (tempBuf.length >= STREAMING_WAV_HEADER_BUFFER_LEN) {
       this.headerBuffer = tempBuf.slice(0, STREAMING_WAV_HEADER_BUFFER_LEN) // Extract header, for next set of chunks to ignore
       const tempDataBuffer = tempBuf.slice(STREAMING_WAV_HEADER_BUFFER_LEN) // Extract data
@@ -59,7 +61,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
   // 3. user wants timestamps and headers: process the timestamps, preserve the 36 bytes and discard the timestamp bytes
   if (!this.ignoreWavHeader && this.processTimeStamps) {
     if (!this.allTimestampsProcessed) {
-      const tempBuf = Buffer.concat(this.timeStampsBuffer)
+      const tempBuf = concatUint8Arrays(this.timeStampsBuffer)
 
       const obj = this.extractTimestampsFromBuffer(tempBuf)
 
@@ -67,7 +69,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
       if (!obj.timestamps) {
         // no wav headers yet, obtain it:
         if (this.headerBuffer.length < STREAMING_WAV_HEADER_BUFFER_LEN) {
-          const tempBuf = Buffer.concat(this.chunks)
+          const tempBuf = concatUint8Arrays(this.chunks)
           if (tempBuf.length >= STREAMING_WAV_HEADER_BUFFER_LEN) {
             this.headerBuffer = tempBuf.slice(
               0,
@@ -88,7 +90,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
       if (obj.timestamps && obj.timestamps !== null) {
         if (this.headerBuffer.length < STREAMING_WAV_HEADER_BUFFER_LEN) {
           // header not processed yet, process it and discard the timestamps bytes. also process the data bytes if any in current chunk
-          const tempBuf = Buffer.concat(this.chunks)
+          const tempBuf = concatUint8Arrays(this.chunks)
           if (tempBuf.length >= STREAMING_WAV_HEADER_BUFFER_LEN) {
             this.headerBuffer = tempBuf.slice(
               0,
@@ -102,7 +104,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
           }
         } else {
           // header has already been processed, discard the timestamps bytes and preserve wav header and the data bytes if any
-          const tempBuf = Buffer.concat(this.timeStampsBuffer)
+          const tempBuf = concatUint8Arrays(this.timeStampsBuffer)
           const tempDataBuffer = tempBuf.slice(obj.offset)
 
           this.chunks = []
@@ -121,7 +123,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
   // 4. timestamps are present and have been requested but no headers are wanted
   if (this.ignoreWavHeader && this.processTimeStamps) {
     if (!this.allTimestampsProcessed) {
-      const tempBuf = Buffer.concat(this.timeStampsBuffer)
+      const tempBuf = concatUint8Arrays(this.timeStampsBuffer)
       const obj = this.extractTimestampsFromBuffer(tempBuf)
 
       if (!obj.timestamps && obj.offset) {
@@ -132,7 +134,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
       if (obj.timestamps && obj.timestamps !== null) {
         this.timeStamps = obj.timestamps
         this.allTimestampsProcessed = true
-        const tempBuf = Buffer.concat(this.timeStampsBuffer)
+        const tempBuf = concatUint8Arrays(this.timeStampsBuffer)
         const tempDataBuffer = tempBuf.slice(obj.offset)
         this.chunks = []
         this.chunks.push(tempDataBuffer)
@@ -142,7 +144,7 @@ StreamDecoder.prototype.decodeChunk = function (chunk: Uint8Array) {
 }
 
 StreamDecoder.prototype.flushBuffer = function (force = false) {
-  const tempBuf = Buffer.concat(this.chunks)
+  const tempBuf = concatUint8Arrays(this.chunks)
   if (force && tempBuf.length > 0) {
     this.chunks = []
     return tempBuf
@@ -159,7 +161,7 @@ StreamDecoder.prototype.flushBuffer = function (force = false) {
 
 StreamDecoder.prototype.reset = function () {
   this.chunks = []
-  this.headerBuffer = Buffer.from('')
+  this.headerBuffer = new Uint8Array()
 }
 
 StreamDecoder.prototype.getTimestamps = function () {
@@ -170,7 +172,7 @@ StreamDecoder.prototype.getTimestamps = function () {
 }
 
 StreamDecoder.prototype.extractTimestampsFromBuffer = function (
-  buffer: Buffer,
+  buffer: Uint8Array,
 ) {
   let offset = 0
   offset += 4 // Skip RIFF ID
@@ -178,13 +180,23 @@ StreamDecoder.prototype.extractTimestampsFromBuffer = function (
   offset += 4 // skip remaining file size
   offset += 14 // skp RIFF type (WAVE), format chunk id, chunk data size, and compression code
 
+  const dataView = new DataView(
+    buffer.buffer,
+    buffer.byteOffset,
+    buffer.byteLength,
+  )
+
   let [nChannels, sampleRate] = [
-    buffer.readUInt16LE(offset), // read number of channels
-    buffer.readUInt32LE(offset + 2), // and sample rate
+    dataView.getUint16(offset, true), // read number of channels
+    dataView.getUint32(offset + 2, true), // and sample rate
   ]
   offset += 14 // skip byte rate, block align and bits per sample at this point we have covered the Header & Format chunks: https://docs.app.resemble.ai/docs/resource_clip/stream#header--format-chunks
 
-  let chunkType = buffer.toString('ascii', offset, offset + 4) // now we are at Timestamps (cue, list & ltxt chunks): https://docs.app.resemble.ai/docs/resource_clip/stream#timestamps-cue-list--ltxt-chunks
+  const textDecoder = new TextDecoder('ascii')
+
+  let chunkType = textDecoder.decode(
+    new Uint8Array(buffer.buffer, buffer.byteOffset + offset, 4),
+  ) // now we are at Timestamps (cue, list & ltxt chunks): https://docs.app.resemble.ai/docs/resource_clip/stream#timestamps-cue-list--ltxt-chunks
 
   offset += 4
   const timestamps = {
@@ -196,8 +208,8 @@ StreamDecoder.prototype.extractTimestampsFromBuffer = function (
 
   if (chunkType === 'cue ') {
     let [remSize, nCuePoints] = [
-      buffer.readUInt32LE(offset), // Remaining size of the cue chunk
-      buffer.readUInt32LE(offset + 4), // Number of remaining cue points
+      dataView.getUint32(offset, true), // Remaining size of the cue chunk
+      dataView.getUint32(offset + 4, true), // Number of remaining cue points
     ]
     offset += 8 // skip to the first cue point
     let endPoint = offset + remSize - 4 // we subtract 4 to account for the "n_cue_points" field size
@@ -211,15 +223,17 @@ StreamDecoder.prototype.extractTimestampsFromBuffer = function (
       return { timestamps: null, offset }
     }
     for (let cp = 1; cp <= nCuePoints; cp++) {
-      const idx = buffer.readUInt32LE(offset)
-      const cuePoint = buffer.readUInt32LE(offset + 20)
+      const idx = dataView.getUint32(offset, true)
+      const cuePoint = dataView.getUint32(offset + 20, true)
       cuePoints[idx] = cuePoint
       offset += 24
     }
 
     // now the offset is at the beginning of the LIST chunk, remember we are processing in the little-endian order
-    chunkType = buffer.toString('ascii', offset, offset + 4) // read the LIST chunk type
-    remSize = buffer.readUInt32LE(offset + 4)
+    chunkType = textDecoder.decode(
+      new Uint8Array(buffer.buffer, buffer.byteOffset + offset, 4),
+    ) // read the LIST chunk type
+    remSize = dataView.getUint32(offset + 4, true)
     offset += 12 // arrive at the start of first LTXT chunk
 
     let listEndPoint = offset + remSize - 4 // we subtract 4 to account for the "rem size" field
@@ -230,16 +244,21 @@ StreamDecoder.prototype.extractTimestampsFromBuffer = function (
 
     // start from the first LTXT chunk and read all LTXT chunks
     while (offset < listEndPoint) {
-      const subChunkSize = buffer.readUInt32LE(offset + 4) // Remaining size of this ltxt chunk after this read
-      const cueIdx = buffer.readUInt32LE(offset + 8)
-      const nSamples = buffer.readUInt32LE(offset + 12)
-      let charTypeRaw = buffer.toString('ascii', offset + 16, offset + 20) // "grph" OR "phon"
+      const subChunkSize = dataView.getUint32(offset + 4, true) // Remaining size of this ltxt chunk after this read
+      const cueIdx = dataView.getUint32(offset + 8, true)
+      const nSamples = dataView.getUint32(offset + 12, true)
+      let charTypeRaw = textDecoder.decode(
+        new Uint8Array(buffer.buffer, buffer.byteOffset + offset + 16, 4),
+      ) // "grph" OR "phon"
       let charType = charTypeRaw.trim()
 
       offset += 28
 
       const textLen = subChunkSize - 20
-      const text = buffer.toString('utf-8', offset, offset + textLen - 1) // -1 to remove the null character at the end
+      const utf8Decoder = new TextDecoder('utf-8')
+      const text = utf8Decoder.decode(
+        new Uint8Array(buffer.buffer, buffer.byteOffset + offset, textLen - 1),
+      ) // -1 to remove the null character at the end
 
       offset += textLen
       offset += textLen % 2
