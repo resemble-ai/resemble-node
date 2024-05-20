@@ -188,6 +188,7 @@ export default {
   stream: async function* (
     streamInput: StreamInput,
     streamConfig?: StreamConfig,
+    csrfToken?: string,
   ): AsyncGenerator {
     const defaultStreamConfig = {
       bufferSize: DEFAULT_BUFFER_SIZE,
@@ -210,6 +211,10 @@ export default {
           wav_encoded_timestamps: getTimeStamps,
         },
         true,
+        csrfToken ? 
+        {
+          'X-CSRF-Token': csrfToken,
+        } : undefined,
       )
 
       // check for error response
