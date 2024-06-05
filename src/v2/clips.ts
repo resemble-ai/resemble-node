@@ -11,7 +11,6 @@ export interface Clip {
   title: string
   body: string
   voice_uuid: string
-  is_public: boolean
   is_archived: boolean
   timestamps?: any
   audio_src?: string
@@ -24,7 +23,6 @@ interface ClipInput {
   title?: string
   body: string
   voice_uuid: string
-  is_public: boolean
   is_archived: boolean
   sample_rate?: 16000 | 22050 | 44100
   output_format?: 'wav' | 'mp3'
