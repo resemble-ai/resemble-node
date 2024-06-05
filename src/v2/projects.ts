@@ -11,7 +11,6 @@ export interface Project {
   uuid: string
   name: string
   description: string
-  is_public: boolean
   is_collaborative: boolean
   is_archived: boolean
   created_at: Date
@@ -21,7 +20,6 @@ export interface Project {
 export interface ProjectInput {
   name: string
   description: string
-  is_public: boolean
   is_collaborative: boolean
   is_archived: boolean
 }

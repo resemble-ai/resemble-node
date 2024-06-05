@@ -72,7 +72,6 @@ test('projects', async () => {
     description: 'SDK Test Description',
     is_archived: false,
     is_collaborative: false,
-    is_public: false,
   })
   expect(project.success).toEqual(true)
   const updated_project = await Resemble.v2.projects.update(project.item.uuid, {
@@ -92,7 +91,6 @@ test('clips', async () => {
     description: 'Test Description',
     is_archived: false,
     is_collaborative: false,
-    is_public: false,
   })
   const projectUuid = project.item.uuid
 
@@ -102,7 +100,6 @@ test('clips', async () => {
     voice_uuid: getTestVoiceUUID(),
     body: 'This is a test',
     is_archived: false,
-    is_public: false,
   })
 
   expect(syncClip.success).toEqual(true)
