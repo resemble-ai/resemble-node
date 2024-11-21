@@ -76,31 +76,17 @@ export default {
       formData.append('voice_uuid', audioEditInput.voice_uuid)
       formData.append('input_audio', buffer, { knownLength: fileSizeInBytes })
 
-      const response = await fetch(
-        context.endpoint('v2', `edit/${audioEditInput.voice_uuid}`),
-        {
-          method: 'POST',
-          headers: {
-            Authorization: context.headers().Authorization,
-            'Content-Type': 'multipart/form-data',
-            ...(formData.getHeaders ? formData.getHeaders() : {}),
-          },
-          body: formData,
+      const response = await fetch(context.endpoint('v2', `edit`), {
+        method: 'POST',
+        headers: {
+          Authorization: context.headers().Authorization,
+          'Content-Type': 'multipart/form-data',
+          ...(formData.getHeaders ? formData.getHeaders() : {}),
         },
-      )
+        body: formData,
+      })
 
-      let json = await response.json()
-      if (json.success) {
-        json = {
-          ...json,
-          item: {
-            ...json.item,
-            created_at: new Date(json.item.created_at),
-            updated_at: new Date(json.item.updated_at),
-          },
-        }
-      }
-      return json
+      return await response.json()
     } catch (e) {
       return UtilV2.errorResponse(e)
     }
