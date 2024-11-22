@@ -30,7 +30,6 @@
     "prettier": "3.0.3"
   },
   "dependencies": {
-    "@resemble/node": "^3.4.0",
     "dotenv": "^16.3.1",
     "isomorphic-fetch": "^3.0.0",
     "isomorphic-form-data": "^2.0.0"
