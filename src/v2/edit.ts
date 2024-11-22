@@ -29,14 +29,7 @@ export default {
   ): Promise<PaginationResponseV2<AudioEdit> | ErrorResponseV2> => {
     try {
       const response = await UtilV2.get(`edit?page=${page}`)
-      const json = await response.json()
-      if (json.success)
-        json.items.map((item) => ({
-          ...item,
-          created_at: new Date(item.created_at),
-          updated_at: new Date(item.updated_at),
-        }))
-      return json
+      return await response.json()
     } catch (e) {
       return UtilV2.errorResponse(e)
     }
@@ -47,18 +40,7 @@ export default {
   ): Promise<ReadResponseV2<AudioEdit> | ErrorResponseV2> => {
     try {
       const response = await UtilV2.get(`edit/${audioEditUuid}`)
-      let json = await response.json()
-      if (json.success) {
-        json = {
-          ...json,
-          item: {
-            ...json.item,
-            created_at: new Date(json.item.created_at),
-            updated_at: new Date(json.item.updated_at),
-          },
-        }
-      }
-      return json
+      return await response.json()
     } catch (e) {
       return UtilV2.errorResponse(e)
     }
