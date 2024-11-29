@@ -40,16 +40,23 @@ export interface ErrorResponseV2 {
 }
 
 export default {
-  get: (path: string, useSynthesisServer: boolean = false) => {
+  get: (
+    path: string,
+    useSynthesisServer: boolean = false,
+    customHeaders?: Record<string, string>,
+  ) => {
     return fetch(
       useSynthesisServer
         ? context.synServerUrl(path)
         : context.endpoint('v2', path),
       {
         method: 'GET',
-        headers: useSynthesisServer
+        headers: {
+          ...(useSynthesisServer
           ? context.synthesisServerHeaders()
-          : context.headers(),
+          : context.headers()),
+          ...customHeaders,
+        },
       },
     )
   },
@@ -57,6 +64,7 @@ export default {
     path: string,
     data: Record<string, any> = {},
     useSynthesisServer: boolean = false,
+    customHeaders?: Record<string, string>,
   ) =>
     fetch(
       useSynthesisServer
@@ -64,16 +72,21 @@ export default {
         : context.endpoint('v2', path),
       {
         method: 'POST',
-        headers: useSynthesisServer
+        headers: {
+          ...(useSynthesisServer
           ? context.synthesisServerHeaders()
-          : context.headers(),
+          : context.headers()),
+          ...customHeaders
+        },
         body: JSON.stringify(data),
+        
       },
     ),
   put: (
     path: string,
     data: Record<string, any> = {},
     useSynthesisServer: boolean = false,
+    customHeaders?: Record<string, string>,
   ) =>
     fetch(
       useSynthesisServer
@@ -81,22 +94,33 @@ export default {
         : context.endpoint('v2', path),
       {
         method: 'PUT',
-        headers: useSynthesisServer
+        headers: {
+          ...(useSynthesisServer
           ? context.synthesisServerHeaders()
-          : context.headers(),
+          : context.headers()),
+          ...customHeaders,
+        },
         body: JSON.stringify(data),
       },
     ),
-  delete: (path: string, useSynthesisServer: boolean = false) =>
+  delete: (
+    path: string,
+    useSynthesisServer: boolean = false,
+    customHeaders?: Record<string, string>,
+  ) =>
     fetch(
       useSynthesisServer
         ? context.synServerUrl(path)
         : context.endpoint('v2', path),
       {
         method: 'DELETE',
-        headers: useSynthesisServer
+        headers: {
+          ...(useSynthesisServer
           ? context.synthesisServerHeaders()
-          : context.headers(),
+          : context.headers()),
+          ...customHeaders,
+        },
+          
       },
     ),
 
