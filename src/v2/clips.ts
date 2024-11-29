@@ -45,6 +45,7 @@ export interface DirectClipInput {
   data: string
   precision?: 'MULAW' | 'PCM_16' | 'PCM_24' | 'PCM_32'
   output_format?: 'wav' | 'mp3'
+  sample_rate?: 8000 | 16000 | 22050 | 32000 | 44100 | 48000
 }
 
 export interface DirectClip {
