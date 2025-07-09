@@ -55,9 +55,17 @@ export default {
 
   get: async (
     uuid: string,
+    sample_url?: boolean,
+    filters?: boolean,
   ): Promise<ReadResponseV2<Voice> | ErrorResponseV2> => {
     try {
-      const response = await UtilV2.get(`voices/${uuid}`)
+      let queryParams = ''
+      if (sample_url === true)
+        queryParams += `${queryParams ? '&' : '?'}sample_url=true`
+      if (filters === true)
+        queryParams += `${queryParams ? '&' : '?'}filters=true`
+
+      const response = await UtilV2.get(`voices/${uuid}${queryParams}`)
       let json = await response.json()
       if (json.success) {
         json = {
