@@ -22,17 +22,24 @@ export interface VoiceInput {
   dataset_url?: string
   callback_uri?: string
   consent?: string
+  sample_url?: boolean
+  filters?: boolean
 }
 
 export default {
   all: async (
     page: number,
     pageSize: number,
+    sample_url?: boolean,
+    filters?: boolean,
   ): Promise<PaginationResponseV2<Voice> | ErrorResponseV2> => {
     try {
-      const response = await UtilV2.get(
-        `voices?page=${page}${pageSize ? `&page_size=${pageSize}` : ''}`,
-      )
+      let queryParams = `page=${page}`
+      if (pageSize) queryParams += `&page_size=${pageSize}`
+      if (sample_url === true) queryParams += `&sample_url=true`
+      if (filters === true) queryParams += `&filters=true`
+
+      const response = await UtilV2.get(`voices?${queryParams}`)
       const json = await response.json()
       if (json.success)
         json.items.map((item) => ({
@@ -48,9 +55,17 @@ export default {
 
   get: async (
     uuid: string,
+    sample_url?: boolean,
+    filters?: boolean,
   ): Promise<ReadResponseV2<Voice> | ErrorResponseV2> => {
     try {
-      const response = await UtilV2.get(`voices/${uuid}`)
+      let queryParams = ''
+      if (sample_url === true)
+        queryParams += `${queryParams ? '&' : '?'}sample_url=true`
+      if (filters === true)
+        queryParams += `${queryParams ? '&' : '?'}filters=true`
+
+      const response = await UtilV2.get(`voices/${uuid}${queryParams}`)
       let json = await response.json()
       if (json.success) {
         json = {
