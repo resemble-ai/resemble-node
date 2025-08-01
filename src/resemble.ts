@@ -7,6 +7,7 @@ import BatchV2 from './v2/batch'
 import PhonemesV2 from './v2/phonemes'
 import TermSubstitutionsV2 from './v2/termSubstitutions'
 import EditV2 from './v2/edits'
+import DetectionV2 from './v2/detection'
 
 export const Resemble = {
   setApiKey: context.setApiKey,
@@ -68,6 +69,11 @@ export const Resemble = {
       all: EditV2.all,
       get: EditV2.get,
       create: EditV2.create,
+    },
+    detection: {
+      create: DetectionV2.create,
+      createSync: DetectionV2.createSync,
+      get: DetectionV2.get,
     },
   },
 }
