@@ -19,6 +19,7 @@ See documentation at [docs.resemble.ai](docs.resemble.ai).
 - Typescript definitions
 - Works with NodeJS, Deno, and the browser!
 - Supports the V2 API
+- Deepfake detection for audio, image, and video files
 
 ## Test!
 
