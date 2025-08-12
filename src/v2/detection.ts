@@ -71,7 +71,22 @@ export interface AudioDetectionInput extends BaseDetectionInput {
 }
 
 export interface ImageDetectionInput extends BaseDetectionInput {
-  pipeline?: string
+  pipeline?:
+    | 'facial->object->general'
+    | 'object->facial->general'
+    | 'general->facial->object'
+    | 'facial->general->object'
+    | 'object->general->facial'
+    | 'general->object->facial'
+    | 'general->object'
+    | 'object->general'
+    | 'general->facial'
+    | 'facial->general'
+    | 'object->facial'
+    | 'facial->object'
+    | 'general'
+    | 'object'
+    | 'facial'
 }
 
 export interface VideoDetectionInput extends BaseDetectionInput {
@@ -80,7 +95,22 @@ export interface VideoDetectionInput extends BaseDetectionInput {
   end_region?: number
   max_video_fps?: number
   max_video_secs?: number
-  pipeline?: string
+  pipeline?:
+    | 'facial->object->general'
+    | 'object->facial->general'
+    | 'general->facial->object'
+    | 'facial->general->object'
+    | 'object->general->facial'
+    | 'general->object->facial'
+    | 'general->object'
+    | 'object->general'
+    | 'general->facial'
+    | 'facial->general'
+    | 'object->facial'
+    | 'facial->object'
+    | 'general'
+    | 'object'
+    | 'facial'
   model_types?: 'image' | 'talking_head'
 }
 
