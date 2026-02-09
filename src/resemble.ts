@@ -73,6 +73,8 @@ export const Resemble = {
     detection: {
       create: DetectionV2.create,
       createSync: DetectionV2.createSync,
+      detectAndGet: DetectionV2.detectAndGet,
+      secureUpload: DetectionV2.secureUpload,
       get: DetectionV2.get,
     },
   },
