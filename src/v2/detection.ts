@@ -71,6 +71,7 @@ export interface BaseDetectionInput {
   intelligence?: boolean
   audio_source_tracing?: boolean
   use_ood_detector?: boolean
+  zero_retention_mode?: boolean
 }
 
 export interface AudioDetectionInput extends BaseDetectionInput {
