@@ -6,6 +6,7 @@ import UtilV2, {
   PaginationResponseV2,
   ReadResponseV2,
   WriteResponseV2,
+  fileAppendOptions,
 } from './util'
 
 export interface AudioEdit {
@@ -56,13 +57,18 @@ export default {
       formData.append('original_transcript', audioEditInput.original_transcript)
       formData.append('target_transcript', audioEditInput.target_transcript)
       formData.append('voice_uuid', audioEditInput.voice_uuid)
-      formData.append('input_audio', buffer, { knownLength: fileSizeInBytes })
+      formData.append(
+        'input_audio',
+        buffer,
+        fileAppendOptions(buffer, fileSizeInBytes),
+      )
 
       const response = await fetch(context.endpoint('v2', `edit`), {
         method: 'POST',
+        // Don't set Content-Type here: form-data supplies it with the
+        // boundary, and a second Content-Type header is rejected by the API.
         headers: {
           Authorization: context.headers().Authorization,
-          'Content-Type': 'multipart/form-data',
           ...(formData.getHeaders ? formData.getHeaders() : {}),
         },
         body: formData,

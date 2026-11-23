@@ -8,6 +8,7 @@ import UtilV2, {
   DeleteResponseV2,
   ReadResponseV2,
   WriteResponseV2,
+  fileAppendOptions,
 } from './util'
 
 export interface Recording {
@@ -90,15 +91,20 @@ export default {
       formData.append('text', recordingInput.text)
       formData.append('emotion', recordingInput.emotion)
       formData.append('is_active', recordingInput.is_active ? 'true' : 'false')
-      formData.append('file', buffer, { knownLength: fileSizeInBytes })
+      formData.append(
+        'file',
+        buffer,
+        fileAppendOptions(buffer, fileSizeInBytes),
+      )
 
       const response = await fetch(
         context.endpoint('v2', `voices/${voiceUuid}/recordings`),
         {
           method: 'POST',
+          // Don't set Content-Type here: form-data supplies it with the
+          // boundary, and a second Content-Type header is rejected by the API.
           headers: {
             Authorization: context.headers().Authorization,
-            'Content-Type': 'multipart/form-data',
             ...(formData.getHeaders ? formData.getHeaders() : {}),
           },
           body: formData,
