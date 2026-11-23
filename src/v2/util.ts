@@ -106,6 +106,15 @@ export default {
   }),
 }
 
+// Options for appending an audio file to form-data. form-data only gives a part
+// a filename when the value carries one (fs streams have .path); without it the
+// API receives a plain text field instead of a file, so Buffers get a generic name.
+export function fileAppendOptions(value: any, knownLength: number) {
+  return value && (value.path || value.name)
+    ? { knownLength }
+    : { knownLength, filename: 'audio' }
+}
+
 // https://github.com/sindresorhus/uint8array-extras
 
 export function concatUint8Arrays(arrays: Uint8Array[], totalLength?: number) {
